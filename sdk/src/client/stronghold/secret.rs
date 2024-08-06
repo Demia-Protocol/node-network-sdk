@@ -390,7 +390,7 @@ impl StrongholdAdapter {
 
     /// Execute [PublicKey](procedures::PublicKey) procedure in Stronghold to get an Ed25519 public key from the SLIP-10
     /// private key located in `private_key`.
-    async fn ed25519_public_key(&self, private_key: Location) -> Result<ed25519::PublicKey, Error> {
+    pub async fn ed25519_public_key(&self, private_key: Location) -> Result<ed25519::PublicKey, Error> {
         Ok(ed25519::PublicKey::try_from_bytes(
             self.stronghold
                 .lock()
@@ -407,7 +407,7 @@ impl StrongholdAdapter {
 
     /// Execute [Ed25519Sign](procedures::Ed25519Sign) procedure in Stronghold to sign `msg` with `private_key` stored
     /// in the Stronghold vault.
-    async fn ed25519_sign(&self, private_key: Location, msg: &[u8]) -> Result<ed25519::Signature, Error> {
+    pub async fn ed25519_sign(&self, private_key: Location, msg: &[u8]) -> Result<ed25519::Signature, Error> {
         Ok(ed25519::Signature::from_bytes(
             self.stronghold
                 .lock()

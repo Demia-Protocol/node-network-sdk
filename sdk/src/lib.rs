@@ -37,3 +37,6 @@ pub use url::Url;
 
 #[cfg(feature = "wallet")]
 pub type Wallet = self::wallet::Wallet<client::secret::SecretManager>;
+
+// Demia specific changes
+pub mod demia;

@@ -77,7 +77,7 @@ use super::{storage::StorageAdapter, utils::Password};
 #[derive(Debug)]
 pub struct StrongholdAdapter {
     /// A stronghold instance.
-    stronghold: Arc<Mutex<Stronghold>>,
+    pub(crate) stronghold: Arc<Mutex<Stronghold>>,
 
     /// A key to open the Stronghold vault.
     ///
