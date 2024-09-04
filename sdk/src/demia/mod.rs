@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize};
 
 pub mod client;
+#[cfg(feature = "stronghold")]
 pub mod stronghold;
 pub mod types;
 

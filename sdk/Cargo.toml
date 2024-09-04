@@ -69,7 +69,7 @@ instant = { version = "0.1.12", default-features = false, optional = true }
 iota-ledger-nano = { version = "1.0.1", default-features = false, optional = true }
 
 # Demia modified
-iota_stronghold = { git = "https://github.com/demia-protocol/demia-sdk", branch = "iota-sdk", default-features = false, features = [ "std" ], optional = true }
+iota_stronghold = { git = "https://github.com/demia-protocol/demia-sdk", default-features = false, features = [ "std" ], optional = true }
 
 log = { version = "0.4.20", default-features = false, optional = true }
 num_cpus = { version = "1.16.0", default-features = false, optional = true }
