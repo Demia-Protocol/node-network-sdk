@@ -1754,7 +1754,7 @@ dependencies = [
 [[package]]
 name = "iota_stronghold"
 version = "2.1.0"
-source = "git+https://github.com/demia-protocol/demia-sdk#d42784ef31eabab60709c5aac7540e6fdd4fd161"
+source = "git+https://github.com/demia-protocol/demia-sdk?branch=develop#baf29e163de23b5220f2f670fbd8f44ce4ac31ab"
 dependencies = [
  "bincode",
  "hkdf",
@@ -2822,9 +2822,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.38.35"
+version = "0.38.36"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a85d50532239da68e9addb745ba38ff4612a242c1c7ceea689c4bc7c2f43c36f"
+checksum = "3f55e80d50763938498dd5ebb18647174e0c76dc38c5505294bb224624f30f36"
 dependencies = [
  "bitflags 2.6.0",
  "errno",
@@ -3188,7 +3188,7 @@ checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 [[package]]
 name = "stronghold-derive"
 version = "1.0.0"
-source = "git+https://github.com/demia-protocol/demia-sdk#d42784ef31eabab60709c5aac7540e6fdd4fd161"
+source = "git+https://github.com/demia-protocol/demia-sdk?branch=develop#baf29e163de23b5220f2f670fbd8f44ce4ac31ab"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3198,7 +3198,7 @@ dependencies = [
 [[package]]
 name = "stronghold-runtime"
 version = "2.0.1"
-source = "git+https://github.com/demia-protocol/demia-sdk#d42784ef31eabab60709c5aac7540e6fdd4fd161"
+source = "git+https://github.com/demia-protocol/demia-sdk?branch=develop#baf29e163de23b5220f2f670fbd8f44ce4ac31ab"
 dependencies = [
  "dirs",
  "iota-crypto",
@@ -3216,7 +3216,7 @@ dependencies = [
 [[package]]
 name = "stronghold-utils"
 version = "1.0.0"
-source = "git+https://github.com/demia-protocol/demia-sdk#d42784ef31eabab60709c5aac7540e6fdd4fd161"
+source = "git+https://github.com/demia-protocol/demia-sdk?branch=develop#baf29e163de23b5220f2f670fbd8f44ce4ac31ab"
 dependencies = [
  "rand",
  "stronghold-derive",
@@ -3225,7 +3225,7 @@ dependencies = [
 [[package]]
 name = "stronghold_engine"
 version = "2.0.1"
-source = "git+https://github.com/demia-protocol/demia-sdk#d42784ef31eabab60709c5aac7540e6fdd4fd161"
+source = "git+https://github.com/demia-protocol/demia-sdk?branch=develop#baf29e163de23b5220f2f670fbd8f44ce4ac31ab"
 dependencies = [
  "anyhow",
  "dirs-next",
