@@ -169,6 +169,7 @@ impl Topic {
     }
 
     pub(crate) fn is_valid(&self) -> bool {
+        #[allow(static_mut_refs)]
         let valid_topics = lazy_static!(
             RegexSet::new([
                 // Milestone topics.
