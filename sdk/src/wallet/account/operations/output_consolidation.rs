@@ -236,7 +236,7 @@ where
         for output_data in outputs_to_consolidate.iter().take(max_inputs.into()) {
             if let Some(native_tokens) = output_data.output.native_tokens() {
                 // Skip output if the max native tokens count would be exceeded
-                if get_new_native_token_count(&total_native_tokens, native_tokens)? > NativeTokens::COUNT_MAX.into() {
+                if get_new_native_token_count(&total_native_tokens, native_tokens)? > NativeTokens::COUNT_MAX as usize {
                     log::debug!("[OUTPUT_CONSOLIDATION] skipping output to not exceed the max native tokens count");
                     continue;
                 }
