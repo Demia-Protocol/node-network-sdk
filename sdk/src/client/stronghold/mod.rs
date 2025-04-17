@@ -74,7 +74,7 @@ use super::{storage::StorageAdapter, utils::Password};
 /// A wrapper on [Stronghold].
 ///
 /// See the [module-level documentation](self) for more details.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct StrongholdAdapter {
     /// A stronghold instance.
     pub(crate) stronghold: Arc<Mutex<Stronghold>>,
