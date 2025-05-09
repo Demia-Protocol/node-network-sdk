@@ -27,7 +27,7 @@ impl StrongholdAdapter {
     }
 
     /// Encrypt a data packet
-    pub async fn x25519_encrypt(&mut self, public_key: x25519::PublicKey, private_key: Location, msg: Vec<u8>) -> Result<EncryptedData> {
+    pub async fn x25519_encrypt(&self, public_key: x25519::PublicKey, private_key: Location, msg: Vec<u8>) -> Result<EncryptedData> {
         let client = self
             .stronghold
             .lock()
@@ -96,7 +96,7 @@ impl StrongholdAdapter {
     }
 
     /// Decrypt a data packet
-    pub async fn x25519_decrypt(&mut self, private_key: Location, msg: EncryptedData) -> Result<Vec<u8>> {
+    pub async fn x25519_decrypt(&self, private_key: Location, msg: EncryptedData) -> Result<Vec<u8>> {
         let client = self
             .stronghold
             .lock()
