@@ -29,7 +29,7 @@ pub use self::{
     state_controller_address::StateControllerAddressUnlockCondition,
     storage_deposit_return::StorageDepositReturnUnlockCondition, timelock::TimelockUnlockCondition,
 };
-use crate::types::block::{address::Address, create_bitflags, protocol::ProtocolParameters, Error};
+use crate::types::block::{address::Address, protocol::ProtocolParameters, Error};
 
 ///
 #[derive(Clone, Eq, PartialEq, Hash, From)]
@@ -512,7 +512,7 @@ pub mod dto {
     use super::*;
     use crate::types::{block::Error, TryFromDto, ValidationParams};
 
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum UnlockConditionDto {
         /// An address unlock condition.
         Address(AddressUnlockConditionDto),

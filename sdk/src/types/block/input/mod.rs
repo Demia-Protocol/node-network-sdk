@@ -91,7 +91,7 @@ pub mod dto {
     use crate::types::block::Error;
 
     /// Describes all the different input types.
-    #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, super::From)]
     #[serde(untagged)]
     pub enum InputDto {
         Utxo(UtxoInputDto),

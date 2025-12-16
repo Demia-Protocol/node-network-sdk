@@ -231,7 +231,7 @@ pub mod dto {
     use crate::types::block::Error;
 
     /// Describes all the different address types.
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum AddressDto {
         /// An Ed25519 address.
         Ed25519(Ed25519AddressDto),

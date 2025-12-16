@@ -155,7 +155,7 @@ pub mod dto {
     };
 
     /// Describes all the different unlock types.
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum UnlockDto {
         Signature(SignatureUnlockDto),
         Reference(ReferenceUnlockDto),

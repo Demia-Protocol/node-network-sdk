@@ -529,7 +529,7 @@ pub mod dto {
     };
     use crate::types::{block::Error, TryFromDto, ValidationParams};
 
-    #[derive(Clone, Debug, From, Deserialize)]
+    #[derive(Clone, Debug, super::From, Deserialize)]
     pub enum OutputBuilderAmountDto {
         Amount(String),
         MinimumStorageDeposit(RentStructure),
@@ -545,7 +545,7 @@ pub mod dto {
     }
 
     /// Describes all the different output types.
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum OutputDto {
         Treasury(TreasuryOutputDto),
         Basic(BasicOutputDto),
