@@ -177,7 +177,7 @@ pub mod dto {
     use super::*;
     use crate::types::{block::Error, TryFromDto, ValidationParams};
 
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum MilestoneOptionDto {
         /// A receipt milestone option.
         Receipt(ReceiptMilestoneOptionDto),

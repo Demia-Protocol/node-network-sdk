@@ -19,7 +19,7 @@ pub use self::metadata::irc_27::{Attribute, Irc27Metadata};
 pub use self::metadata::irc_30::Irc30Metadata;
 pub use self::{issuer::IssuerFeature, metadata::MetadataFeature, sender::SenderFeature, tag::TagFeature};
 pub(crate) use self::{metadata::MetadataFeatureLength, tag::TagFeatureLength};
-use crate::types::block::{create_bitflags, Error};
+use crate::types::block::Error;
 
 ///
 #[derive(Clone, Eq, PartialEq, Hash, From, Packable)]
@@ -304,7 +304,7 @@ pub mod dto {
     use super::*;
     use crate::types::block::{address::Address, Error};
 
-    #[derive(Clone, Debug, Eq, PartialEq, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum FeatureDto {
         /// A sender feature.
         Sender(SenderFeatureDto),

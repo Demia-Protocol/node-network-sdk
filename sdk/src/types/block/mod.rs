@@ -35,7 +35,6 @@ pub mod signature;
 /// A module that provides types and syntactic validations of unlocks.
 pub mod unlock;
 
-pub(crate) use r#macro::create_bitflags;
 #[cfg(feature = "serde")]
 pub(crate) use r#macro::{impl_id, string_serde_impl};
 

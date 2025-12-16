@@ -56,7 +56,7 @@ pub(crate) mod dto {
     use crate::types::{block::Error, TryFromDto, ValidationParams};
 
     /// Describes all the different essence types.
-    #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, From)]
+    #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize, super::From)]
     #[serde(untagged)]
     pub enum TransactionEssenceDto {
         Regular(RegularTransactionEssenceDto),
