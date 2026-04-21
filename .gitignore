@@ -33,3 +33,5 @@ book
 
 # Temporary documentation
 docs
+
+Cargo.lock
