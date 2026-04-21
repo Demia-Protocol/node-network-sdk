@@ -6,6 +6,9 @@
 pub enum Error {
     /// Client error.
     #[error("client error {0}")]
+    Setup(#[from] rumqttc::OptionError),
+    /// Client error.
+    #[error("client error {0}")]
     Client(#[from] rumqttc::ClientError),
     /// Connection not found.
     #[error("connection not found")]

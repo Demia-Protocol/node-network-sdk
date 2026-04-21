@@ -11,7 +11,7 @@ use std::{sync::Arc, time::Instant};
 use crypto::utils;
 use log::warn;
 use packable::PackableExt;
-use rumqttc::{AsyncClient, Event, EventLoop, Incoming, MqttOptions, NetworkOptions, QoS, SubscribeFilter, Transport};
+use rumqttc::{AsyncClient, Broker, Event, EventLoop, Incoming, MqttOptions, NetworkOptions, QoS, Filter, Transport};
 use tokio::sync::watch::Receiver as WatchReceiver;
 
 pub use self::{error::Error, types::*};
@@ -96,7 +96,7 @@ async fn set_mqtt_client(client: &Client) -> Result<(), Error> {
                     if secure { "wss" } else { "ws" },
                     node.url.port_or_known_default().unwrap_or(port),
                 );
-                let mut mqtt_options = MqttOptions::new(id, uri, port);
+                let mut mqtt_options = MqttOptions::new(id, Broker::websocket(uri).map_err(Error::Setup)?);
                 if secure {
                     mqtt_options.set_transport(Transport::wss_with_default_config());
                 } else {
@@ -105,7 +105,7 @@ async fn set_mqtt_client(client: &Client) -> Result<(), Error> {
                 mqtt_options
             } else {
                 let uri = host.to_string();
-                let mut mqtt_options = MqttOptions::new(id, uri, port);
+                let mut mqtt_options = MqttOptions::new(id, Broker::tcp(uri, port));
                 if secure {
                     mqtt_options.set_transport(Transport::tls_with_default_config());
                 }
@@ -114,7 +114,7 @@ async fn set_mqtt_client(client: &Client) -> Result<(), Error> {
             let (_, mut connection) = AsyncClient::new(mqtt_options.clone(), 10);
             let mut network_options = NetworkOptions::new();
             network_options.set_connection_timeout(broker_options.timeout.as_secs());
-            connection.set_network_options(network_options);
+            connection.options.set_network_options(network_options);
             // poll the event loop until we find a ConnAck event,
             // which means that the mqtt client is ready to be used on this host
             // if the event loop returns an error, we check the next node
@@ -170,8 +170,8 @@ fn poll_mqtt(client: &Client, mut event_loop: EventLoop) {
                                 .read()
                                 .await
                                 .keys()
-                                .map(|t| SubscribeFilter::new(t.as_str().to_owned(), QoS::AtLeastOnce))
-                                .collect::<Vec<SubscribeFilter>>();
+                                .map(|t| Filter::new(t.as_str().to_owned(), QoS::AtLeastOnce))
+                                .collect::<Vec<Filter>>();
                             if !topics.is_empty() {
                                 let _ = client
                                     .inner
@@ -191,16 +191,17 @@ fn poll_mqtt(client: &Client, mut event_loop: EventLoop) {
 
                         crate::client::async_runtime::spawn(async move {
                             let mqtt_topic_handlers = client.mqtt.topic_handlers.read().await;
+                            let topic = String::from_utf8_lossy(&p.topic).to_string();
 
-                            if let Some(handlers) = mqtt_topic_handlers.get(&Topic::new_unchecked(&p.topic)) {
+                            if let Some(handlers) = mqtt_topic_handlers.get(&Topic::new_unchecked(&topic)) {
                                 let event = {
-                                    if p.topic.contains("blocks") || p.topic.contains("included-block") {
+                                    if topic.contains("blocks") || topic.contains("included-block") {
                                         let payload = &*p.payload;
                                         let protocol_parameters = &client.network_info.read().await.protocol_parameters;
 
                                         match Block::unpack_verified(payload, protocol_parameters) {
                                             Ok(block) => Ok(TopicEvent {
-                                                topic: p.topic.clone(),
+                                                topic,
                                                 payload: MqttPayload::Block((&block).into()),
                                             }),
                                             Err(e) => {
@@ -208,13 +209,13 @@ fn poll_mqtt(client: &Client, mut event_loop: EventLoop) {
                                                 Err(())
                                             }
                                         }
-                                    } else if p.topic.contains("milestones") {
+                                    } else if topic.contains("milestones") {
                                         let payload = &*p.payload;
                                         let protocol_parameters = &client.network_info.read().await.protocol_parameters;
 
                                         match Payload::unpack_verified(payload, protocol_parameters) {
                                             Ok(Payload::Milestone(milestone)) => Ok(TopicEvent {
-                                                topic: p.topic.clone(),
+                                                topic,
                                                 payload: MqttPayload::MilestonePayload(milestone.as_ref().into()),
                                             }),
                                             Ok(p) => {
@@ -229,13 +230,13 @@ fn poll_mqtt(client: &Client, mut event_loop: EventLoop) {
                                                 Err(())
                                             }
                                         }
-                                    } else if p.topic.contains("receipts") {
+                                    } else if topic.contains("receipts") {
                                         let payload = &*p.payload;
                                         let protocol_parameters = &client.network_info.read().await.protocol_parameters;
 
                                         match ReceiptMilestoneOption::unpack_verified(payload, protocol_parameters) {
                                             Ok(receipt) => Ok(TopicEvent {
-                                                topic: p.topic.clone(),
+                                                topic,
                                                 payload: MqttPayload::Receipt((&receipt).into()),
                                             }),
                                             Err(e) => {
@@ -246,7 +247,7 @@ fn poll_mqtt(client: &Client, mut event_loop: EventLoop) {
                                     } else {
                                         match serde_json::from_slice(&p.payload) {
                                             Ok(value) => Ok(TopicEvent {
-                                                topic: p.topic.clone(),
+                                                topic,
                                                 payload: MqttPayload::Json(value),
                                             }),
                                             Err(e) => {
@@ -375,7 +376,7 @@ impl<'a> MqttTopicManager<'a> {
             .subscribe_many(
                 self.topics
                     .iter()
-                    .map(|t| SubscribeFilter::new(t.as_str().to_owned(), QoS::AtLeastOnce)),
+                    .map(|t| Filter::new(t.as_str().to_owned(), QoS::AtLeastOnce)),
             )
             .await?;
         {
