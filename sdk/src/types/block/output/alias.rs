@@ -577,9 +577,10 @@ impl StateTransitionVerifier for AliasOutput {
         }
 
         if let Some(issuer) = next_state.immutable_features().issuer()
-            && !context.unlocked_addresses.contains(issuer.address()) {
-                return Err(StateTransitionError::IssuerNotUnlocked);
-            }
+            && !context.unlocked_addresses.contains(issuer.address())
+        {
+            return Err(StateTransitionError::IssuerNotUnlocked);
+        }
 
         Ok(())
     }
@@ -685,18 +686,22 @@ fn verify_index_counter(alias_id: &AliasId, state_index: u32, foundry_counter: u
 fn verify_unlock_conditions(unlock_conditions: &UnlockConditions, alias_id: &AliasId) -> Result<(), Error> {
     if let Some(unlock_condition) = unlock_conditions.state_controller_address() {
         if let Address::Alias(alias_address) = unlock_condition.address()
-            && !alias_id.is_null() && alias_address.alias_id() == alias_id {
-                return Err(Error::SelfControlledAliasOutput(*alias_id));
-            }
+            && !alias_id.is_null()
+            && alias_address.alias_id() == alias_id
+        {
+            return Err(Error::SelfControlledAliasOutput(*alias_id));
+        }
     } else {
         return Err(Error::MissingStateControllerUnlockCondition);
     }
 
     if let Some(unlock_condition) = unlock_conditions.governor_address() {
         if let Address::Alias(alias_address) = unlock_condition.address()
-            && !alias_id.is_null() && alias_address.alias_id() == alias_id {
-                return Err(Error::SelfControlledAliasOutput(*alias_id));
-            }
+            && !alias_id.is_null()
+            && alias_address.alias_id() == alias_id
+        {
+            return Err(Error::SelfControlledAliasOutput(*alias_id));
+        }
     } else {
         return Err(Error::MissingGovernorUnlockCondition);
     }

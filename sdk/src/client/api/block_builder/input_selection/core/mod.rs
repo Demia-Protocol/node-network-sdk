@@ -499,12 +499,13 @@ impl InputSelection {
                             foundry_output,
                             input_native_tokens_builder.deref(),
                             output_native_tokens_builder.deref(),
-                        ) {
-                            log::debug!("validate_transitions error {err:?}");
-                            return Err(Error::UnfulfillableRequirement(Requirement::Foundry(
-                                foundry_output.id(),
-                            )));
-                        }
+                        )
+                    {
+                        log::debug!("validate_transitions error {err:?}");
+                        return Err(Error::UnfulfillableRequirement(Requirement::Foundry(
+                            foundry_output.id(),
+                        )));
+                    }
                 }
                 Output::Nft(nft_output) => {
                     // Null id outputs are just minted and can't be a transition

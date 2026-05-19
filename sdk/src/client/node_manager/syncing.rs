@@ -28,20 +28,17 @@ impl ClientInner {
     pub async fn unhealthy_nodes(&self) -> HashSet<Node> {
         let node_manager = self.node_manager.read().await;
 
-        node_manager
-            .healthy_nodes
-            .read()
-            .map_or_else(
-                |_| HashSet::new(),
-                |healthy_nodes| {
-                    node_manager
-                        .nodes
-                        .iter()
-                        .filter(|node| !healthy_nodes.contains_key(node))
-                        .cloned()
-                        .collect()
-                },
-            )
+        node_manager.healthy_nodes.read().map_or_else(
+            |_| HashSet::new(),
+            |healthy_nodes| {
+                node_manager
+                    .nodes
+                    .iter()
+                    .filter(|node| !healthy_nodes.contains_key(node))
+                    .cloned()
+                    .collect()
+            },
+        )
     }
 }
 

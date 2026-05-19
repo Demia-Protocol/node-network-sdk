@@ -133,7 +133,6 @@ impl TryFrom<u8> for ConflictReason {
     }
 }
 
-
 ///
 pub struct ValidationContext<'a> {
     ///
@@ -262,16 +261,17 @@ pub fn semantic_validation(
         }
 
         if !unlock_conditions.is_expired(context.milestone_timestamp)
-            && let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return() {
-                let amount = context
-                    .storage_deposit_returns
-                    .entry(*storage_deposit_return.return_address())
-                    .or_default();
+            && let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return()
+        {
+            let amount = context
+                .storage_deposit_returns
+                .entry(*storage_deposit_return.return_address())
+                .or_default();
 
-                *amount = amount
-                    .checked_add(storage_deposit_return.amount())
-                    .ok_or(Error::StorageDepositReturnOverflow)?;
-            }
+            *amount = amount
+                .checked_add(storage_deposit_return.amount())
+                .ok_or(Error::StorageDepositReturnOverflow)?;
+        }
 
         context.input_amount = context
             .input_amount
@@ -308,9 +308,10 @@ pub fn semantic_validation(
         };
 
         if let Some(sender) = features.sender()
-            && !context.unlocked_addresses.contains(sender.address()) {
-                return Ok(ConflictReason::UnverifiedSender);
-            }
+            && !context.unlocked_addresses.contains(sender.address())
+        {
+            return Ok(ConflictReason::UnverifiedSender);
+        }
 
         context.output_amount = context
             .output_amount

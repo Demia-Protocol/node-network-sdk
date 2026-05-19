@@ -77,9 +77,10 @@ impl HttpClient {
         let mut request_builder = request_builder.header(reqwest::header::USER_AGENT, &self.user_agent);
 
         if let Some(node_auth) = &node.auth
-            && let Some(jwt) = &node_auth.jwt {
-                request_builder = request_builder.bearer_auth(jwt);
-            }
+            && let Some(jwt) = &node_auth.jwt
+        {
+            request_builder = request_builder.bearer_auth(jwt);
+        }
         #[cfg(not(target_family = "wasm"))]
         {
             request_builder = request_builder.timeout(_timeout);

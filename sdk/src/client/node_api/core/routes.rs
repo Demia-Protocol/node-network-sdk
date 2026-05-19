@@ -422,12 +422,13 @@ impl Client {
     pub async fn get_node_info(url: &str, auth: Option<NodeAuth>) -> Result<InfoResponse> {
         let mut url = crate::client::node_manager::builder::validate_url(Url::parse(url)?)?;
         if let Some(auth) = &auth
-            && let Some((name, password)) = &auth.basic_auth_name_pwd {
-                url.set_username(name)
-                    .map_err(|_| crate::client::Error::UrlAuth("username"))?;
-                url.set_password(Some(password))
-                    .map_err(|_| crate::client::Error::UrlAuth("password"))?;
-            }
+            && let Some((name, password)) = &auth.basic_auth_name_pwd
+        {
+            url.set_username(name)
+                .map_err(|_| crate::client::Error::UrlAuth("username"))?;
+            url.set_password(Some(password))
+                .map_err(|_| crate::client::Error::UrlAuth("password"))?;
+        }
         let path = "api/core/v2/info";
         if url.path().ends_with('/') {
             url.set_path(&format!("{}{}", url.path(), path));

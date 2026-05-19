@@ -92,9 +92,10 @@ where
             for input in essence.inputs() {
                 if let Input::Utxo(input) = input
                     && let Some(input) = account_details.outputs.get(input.output_id())
-                        && input.is_spent {
-                            input_got_spent = true;
-                        }
+                    && input.is_spent
+                {
+                    input_got_spent = true;
+                }
             }
 
             if let Some(block_id) = transaction.block_id {

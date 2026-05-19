@@ -75,4 +75,3 @@ pub enum RemainderValueStrategy {
     /// Move the remainder value to any specified address.
     CustomAddress(AccountAddress),
 }
-

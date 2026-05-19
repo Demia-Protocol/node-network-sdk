@@ -1,4 +1,5 @@
 use core::fmt::Display;
+
 use crate::types::block::BlockDto;
 
 /// Response of GET /api/core/v2/tagged/{tag_id}.

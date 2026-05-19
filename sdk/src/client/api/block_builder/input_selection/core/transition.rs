@@ -47,9 +47,10 @@ impl InputSelection {
         let mut highest_foundry_serial_number = 0;
         for output in self.outputs.iter() {
             if let Output::Foundry(foundry) = output
-                && *foundry.alias_address().alias_id() == alias_id {
-                    highest_foundry_serial_number = u32::max(highest_foundry_serial_number, foundry.serial_number());
-                }
+                && *foundry.alias_address().alias_id() == alias_id
+            {
+                highest_foundry_serial_number = u32::max(highest_foundry_serial_number, foundry.serial_number());
+            }
         }
 
         // Remove potential sender feature because it will not be needed anymore as it only needs to be verified once.

@@ -108,9 +108,10 @@ where
 
                     // Get bech32_hrp from address
                     if let Some(address) = first_account_addresses.first()
-                        && bech32_hrp.is_none() {
-                            bech32_hrp = Some(address.address.hrp);
-                        }
+                        && bech32_hrp.is_none()
+                    {
+                        bech32_hrp = Some(address.address.hrp);
+                    }
                 }
 
                 // get bech32_hrp

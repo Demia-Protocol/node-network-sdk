@@ -77,12 +77,13 @@ impl RegularTransactionEssenceBuilder {
     ) -> Result<RegularTransactionEssence, Error> {
         let params = params.into();
         if let Some(protocol_parameters) = params.protocol_parameters()
-            && self.network_id != protocol_parameters.network_id() {
-                return Err(Error::NetworkIdMismatch {
-                    expected: protocol_parameters.network_id(),
-                    actual: self.network_id,
-                });
-            }
+            && self.network_id != protocol_parameters.network_id()
+        {
+            return Err(Error::NetworkIdMismatch {
+                expected: protocol_parameters.network_id(),
+                actual: self.network_id,
+            });
+        }
 
         let inputs: BoxedSlicePrefix<Input, InputCount> = self
             .inputs
@@ -248,9 +249,11 @@ fn verify_outputs<const VERIFY: bool>(outputs: &[Output], visitor: &ProtocolPara
             }
 
             if let Some(chain_id) = chain_id
-                && !chain_id.is_null() && !chain_ids.insert(chain_id) {
-                    return Err(Error::DuplicateOutputChain(chain_id));
-                }
+                && !chain_id.is_null()
+                && !chain_ids.insert(chain_id)
+            {
+                return Err(Error::DuplicateOutputChain(chain_id));
+            }
 
             output.verify_storage_deposit(*visitor.rent_structure(), visitor.token_supply())?;
         }

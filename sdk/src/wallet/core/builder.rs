@@ -185,12 +185,13 @@ where
         // Check against potential account coin type before saving the wallet data
         #[cfg(feature = "storage")]
         if let Some(account) = accounts.first()
-            && *account.coin_type() != coin_type {
-                return Err(crate::wallet::Error::InvalidCoinType {
-                    new_coin_type: coin_type,
-                    existing_coin_type: *account.coin_type(),
-                });
-            }
+            && *account.coin_type() != coin_type
+        {
+            return Err(crate::wallet::Error::InvalidCoinType {
+                new_coin_type: coin_type,
+                existing_coin_type: *account.coin_type(),
+            });
+        }
 
         // Store wallet data in storage
         #[cfg(feature = "storage")]

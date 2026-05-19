@@ -1,10 +1,14 @@
 // Copyright 2020-2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use rand::{Rng, distributions::{
-    Distribution, Standard,
-    uniform::{SampleRange, SampleUniform},
-}, random};
+use rand::{
+    Rng,
+    distributions::{
+        Distribution, Standard,
+        uniform::{SampleRange, SampleUniform},
+    },
+    random,
+};
 
 /// Generates a random number.
 pub fn rand_number<T>() -> T

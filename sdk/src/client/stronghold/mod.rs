@@ -259,9 +259,10 @@ impl StrongholdAdapter {
         let key_provider = self::common::key_provider_from_password(password);
 
         if let Some(old_key_provider) = &*key_provider_guard
-            && old_key_provider.try_unlock()? != key_provider.try_unlock()? {
-                return Err(Error::InvalidPassword);
-            }
+            && old_key_provider.try_unlock()? != key_provider.try_unlock()?
+        {
+            return Err(Error::InvalidPassword);
+        }
 
         let snapshot_path = SnapshotPath::from_path(&self.snapshot_path);
         let stronghold = self.stronghold.lock().await;
@@ -499,11 +500,12 @@ impl StrongholdAdapter {
     /// [`unload_stronghold_snapshot()`]: Self::unload_stronghold_snapshot()
     pub async fn write_stronghold_snapshot(&self, snapshot_path: Option<&Path>) -> Result<(), Error> {
         if let Some(p) = snapshot_path
-            && p.is_dir() {
-                // TODO: Add Error in 2.0 as its breaking.
-                // Issue #1197
-                return Err(std::io::Error::other(format!("Path is not a file: {p:?}")).into());
-            }
+            && p.is_dir()
+        {
+            // TODO: Add Error in 2.0 as its breaking.
+            // Issue #1197
+            return Err(std::io::Error::other(format!("Path is not a file: {p:?}")).into());
+        }
 
         // The key needs to be supplied first.
         let locked_key_provider = self.key_provider.lock().await;

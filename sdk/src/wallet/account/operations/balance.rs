@@ -79,9 +79,10 @@ where
             #[cfg(feature = "participation")]
             {
                 if let Some(voting_output) = &voting_output
-                    && voting_output.output.as_basic().address() == address_with_unspent_outputs.address.inner() {
-                        balance.base_coin.voting_power = voting_output.output.amount();
-                    }
+                    && voting_output.output.as_basic().address() == address_with_unspent_outputs.address.inner()
+                {
+                    balance.base_coin.voting_power = voting_output.output.amount();
+                }
             }
 
             for output_id in &address_with_unspent_outputs.output_ids {

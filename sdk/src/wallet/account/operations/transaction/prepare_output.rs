@@ -53,9 +53,10 @@ where
             .await?;
 
         if let Some(assets) = &params.assets
-            && let Some(native_tokens) = &assets.native_tokens {
-                first_output_builder = first_output_builder.with_native_tokens(native_tokens.clone());
-            }
+            && let Some(native_tokens) = &assets.native_tokens
+        {
+            first_output_builder = first_output_builder.with_native_tokens(native_tokens.clone());
+        }
 
         if let Some(features) = params.features {
             if let Some(tag) = features.tag {

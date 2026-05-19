@@ -53,9 +53,10 @@ pub(crate) fn amount_sums(
         outputs_sum += output.amount();
 
         if let Output::Basic(output) = output
-            && let Some(address) = output.simple_deposit_address() {
-                *outputs_sdr.entry(*address).or_default() += output.amount();
-            }
+            && let Some(address) = output.simple_deposit_address()
+        {
+            *outputs_sdr.entry(*address).or_default() += output.amount();
+        }
     }
 
     // TODO explanation about that
@@ -322,8 +323,7 @@ impl InputSelection {
 
         log::debug!("Ordering inputs from low to high amount");
         // Sort inputs per amount, low to high.
-        self.available_inputs
-            .sort_by_key(|left| left.output.amount());
+        self.available_inputs.sort_by_key(|left| left.output.amount());
 
         if let Some(r) = self.fulfill_amount_requirement_inner(&mut amount_selection) {
             return Ok(r);

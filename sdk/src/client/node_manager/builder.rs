@@ -97,12 +97,13 @@ impl NodeManagerBuilder {
     pub(crate) fn with_primary_node(mut self, url: &str, auth: Option<NodeAuth>) -> Result<Self> {
         let mut url = validate_url(Url::parse(url)?)?;
         if let Some(auth) = &auth
-            && let Some((name, password)) = &auth.basic_auth_name_pwd {
-                url.set_username(name)
-                    .map_err(|_| crate::client::Error::UrlAuth("username"))?;
-                url.set_password(Some(password))
-                    .map_err(|_| crate::client::Error::UrlAuth("password"))?;
-            }
+            && let Some((name, password)) = &auth.basic_auth_name_pwd
+        {
+            url.set_username(name)
+                .map_err(|_| crate::client::Error::UrlAuth("username"))?;
+            url.set_password(Some(password))
+                .map_err(|_| crate::client::Error::UrlAuth("password"))?;
+        }
         self.primary_node.replace(NodeDto::Node(Node {
             url,
             auth,
@@ -114,12 +115,13 @@ impl NodeManagerBuilder {
     pub(crate) fn with_primary_pow_node(mut self, url: &str, auth: Option<NodeAuth>) -> Result<Self> {
         let mut url = validate_url(Url::parse(url)?)?;
         if let Some(auth) = &auth
-            && let Some((name, password)) = &auth.basic_auth_name_pwd {
-                url.set_username(name)
-                    .map_err(|_| crate::client::Error::UrlAuth("username"))?;
-                url.set_password(Some(password))
-                    .map_err(|_| crate::client::Error::UrlAuth("password"))?;
-            }
+            && let Some((name, password)) = &auth.basic_auth_name_pwd
+        {
+            url.set_username(name)
+                .map_err(|_| crate::client::Error::UrlAuth("username"))?;
+            url.set_password(Some(password))
+                .map_err(|_| crate::client::Error::UrlAuth("password"))?;
+        }
         self.primary_pow_node.replace(NodeDto::Node(Node {
             url,
             auth,
@@ -132,12 +134,13 @@ impl NodeManagerBuilder {
         let mut url = validate_url(Url::parse(url)?)?;
         let auth = auth.into();
         if let Some(auth) = &auth
-            && let Some((name, password)) = &auth.basic_auth_name_pwd {
-                url.set_username(name)
-                    .map_err(|_| crate::client::Error::UrlAuth("username"))?;
-                url.set_password(Some(password))
-                    .map_err(|_| crate::client::Error::UrlAuth("password"))?;
-            }
+            && let Some((name, password)) = &auth.basic_auth_name_pwd
+        {
+            url.set_username(name)
+                .map_err(|_| crate::client::Error::UrlAuth("username"))?;
+            url.set_password(Some(password))
+                .map_err(|_| crate::client::Error::UrlAuth("password"))?;
+        }
         self.permanodes.insert(NodeDto::Node(Node {
             url,
             auth,
@@ -156,12 +159,13 @@ impl NodeManagerBuilder {
         let mut url = validate_url(Url::parse(url)?)?;
         let auth = auth.into();
         if let Some(auth) = &auth
-            && let Some((name, password)) = &auth.basic_auth_name_pwd {
-                url.set_username(name)
-                    .map_err(|_| crate::client::Error::UrlAuth("username"))?;
-                url.set_password(Some(password))
-                    .map_err(|_| crate::client::Error::UrlAuth("password"))?;
-            }
+            && let Some((name, password)) = &auth.basic_auth_name_pwd
+        {
+            url.set_username(name)
+                .map_err(|_| crate::client::Error::UrlAuth("username"))?;
+            url.set_password(Some(password))
+                .map_err(|_| crate::client::Error::UrlAuth("password"))?;
+        }
         self.nodes.insert(NodeDto::Node(Node {
             url,
             auth,

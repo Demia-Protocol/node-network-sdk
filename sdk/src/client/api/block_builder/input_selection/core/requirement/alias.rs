@@ -18,20 +18,22 @@ pub(crate) fn is_alias_transition<'a>(
         // Checks if the alias exists in the outputs and gets the transition type.
         for output in outputs.iter() {
             if let Output::Alias(alias_output) = output
-                && *alias_output.alias_id() == alias_id {
-                    if alias_output.state_index() == alias_input.state_index() {
-                        // Governance transition.
-                        return Some(AliasTransition::Governance);
-                    } else {
-                        // State transition.
-                        return Some(AliasTransition::State);
-                    }
+                && *alias_output.alias_id() == alias_id
+            {
+                if alias_output.state_index() == alias_input.state_index() {
+                    // Governance transition.
+                    return Some(AliasTransition::Governance);
+                } else {
+                    // State transition.
+                    return Some(AliasTransition::State);
                 }
+            }
         }
         if let Some(burn) = burn.into()
-            && burn.aliases().contains(&alias_id) {
-                return Some(AliasTransition::Governance);
-            }
+            && burn.aliases().contains(&alias_id)
+        {
+            return Some(AliasTransition::Governance);
+        }
     }
     None
 }
@@ -77,7 +79,9 @@ impl InputSelection {
 
         // If a state transition is not required and the alias has already been selected, no additional check has to be
         // performed.
-        if !alias_transition.is_state() && let Some(input) = selected_input {
+        if !alias_transition.is_state()
+            && let Some(input) = selected_input
+        {
             log::debug!(
                 "{alias_id:?}/{alias_transition:?} requirement already fulfilled by {:?}",
                 input.output_id()
