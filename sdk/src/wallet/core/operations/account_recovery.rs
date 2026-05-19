@@ -1,11 +1,11 @@
 // Copyright 2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use instant::Instant;
+use web_time::Instant;
 
 use crate::{
     client::secret::SecretManage,
-    wallet::{account::SyncOptions, task, Account, Wallet},
+    wallet::{Account, Wallet, account::SyncOptions, task},
 };
 
 impl<S: 'static + SecretManage> Wallet<S>
@@ -122,7 +122,7 @@ where
 
             // Generate account with addresses and get their outputs in parallel
             let results = futures::future::try_join_all((0..updated_account_gap_limit).map(|_| {
-                let mut new_account = self.create_account();
+                let new_account = self.create_account();
                 let sync_options_ = sync_options.clone();
                 async move {
                     task::spawn(async move {

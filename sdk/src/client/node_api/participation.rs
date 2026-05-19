@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! IOTA node public participation routes.
+//!
 //! <https://github.com/iota-community/treasury/blob/main/specifications/hornet-participation-plugin.md#public-node-endpoints>
 //! <https://github.com/iotaledger/inx-participation/blob/develop/components/participation/routes.go>
 
@@ -15,7 +16,7 @@ use crate::{
                 ParticipationEventType,
             },
         },
-        block::{address::Bech32Address, output::OutputId, ConvertTo},
+        block::{ConvertTo, address::Bech32Address, output::OutputId},
     },
 };
 

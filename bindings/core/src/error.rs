@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use packable::error::UnexpectedEOF;
-use serde::{ser::SerializeMap, Serialize, Serializer};
+use serde::{Serialize, Serializer, ser::SerializeMap};
 
 /// Result type of the bindings core crate.
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Error type for the bindings core crate.
 #[derive(Debug, thiserror::Error)]
+#[allow(clippy::large_enum_variant)]
 pub enum Error {
     /// Block errors.
     #[error("{0}")]

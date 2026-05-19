@@ -1,22 +1,22 @@
 // Copyright 2021 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use instant::Instant;
+use web_time::Instant;
 
 use crate::{
     client::{
         api::{
-            input_selection::Selected, transaction::validate_regular_transaction_essence_length,
-            PreparedTransactionData,
+            PreparedTransactionData, input_selection::Selected,
+            transaction::validate_regular_transaction_essence_length,
         },
-        secret::{types::InputSigningData, SecretManage},
+        secret::{SecretManage, types::InputSigningData},
     },
     types::block::{
         input::{Input, UtxoInput},
         output::{InputsCommitment, Output},
         payload::transaction::{RegularTransactionEssence, TransactionEssence},
     },
-    wallet::account::{operations::transaction::TransactionOptions, Account},
+    wallet::account::{Account, operations::transaction::TransactionOptions},
 };
 
 impl<S: 'static + SecretManage> Account<S>

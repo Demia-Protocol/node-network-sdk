@@ -8,7 +8,7 @@ use std::ops::Range;
 
 use async_trait::async_trait;
 use crypto::{
-    hashes::{blake2b::Blake2b256, Digest},
+    hashes::{Digest, blake2b::Blake2b256},
     keys::{
         bip39::{Mnemonic, MnemonicRef, Passphrase},
         bip44::Bip44,
@@ -19,20 +19,20 @@ use crypto::{
         secp256k1_ecdsa::{self, EvmAddress},
     },
 };
-use instant::Duration;
 use iota_stronghold::{
-    procedures::{self, Curve, KeyType, Slip10DeriveInput},
     Location,
+    procedures::{self, Curve, KeyType, Slip10DeriveInput},
 };
+use web_time::Duration;
 
 use super::{
-    common::{DERIVE_OUTPUT_RECORD_PATH, PRIVATE_DATA_CLIENT_PATH, SECRET_VAULT_PATH, SEED_RECORD_PATH},
     StrongholdAdapter,
+    common::{DERIVE_OUTPUT_RECORD_PATH, PRIVATE_DATA_CLIENT_PATH, SECRET_VAULT_PATH, SEED_RECORD_PATH},
 };
 use crate::{
     client::{
         api::PreparedTransactionData,
-        secret::{types::StrongholdDto, GenerateAddressOptions, SecretManage, SecretManagerConfig},
+        secret::{GenerateAddressOptions, SecretManage, SecretManagerConfig, types::StrongholdDto},
         stronghold::Error,
     },
     types::block::{
@@ -369,18 +369,18 @@ impl StrongholdAdapter {
                 output,
             })
         {
-            match err {
+            return match err {
                 iota_stronghold::procedures::ProcedureError::Engine(ref e) => {
                     // Custom error for missing vault error: https://github.com/iotaledger/stronghold.rs/blob/7f0a2e0637394595e953f9071fa74b1d160f51ec/client/src/types/error.rs#L170
                     if e.to_string().contains("does not exist") {
                         // Actually the seed, derived from the mnemonic, is not stored.
-                        return Err(Error::MnemonicMissing);
+                        Err(Error::MnemonicMissing)
                     } else {
-                        return Err(err.into());
+                        Err(err.into())
                     }
                 }
                 _ => {
-                    return Err(err.into());
+                    Err(err.into())
                 }
             }
         };

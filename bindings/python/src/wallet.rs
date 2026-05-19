@@ -4,17 +4,16 @@
 use std::sync::Arc;
 
 use iota_sdk_bindings_core::{
-    call_wallet_method as rust_call_wallet_method,
-    iota_sdk::wallet::{events::types::WalletEventType, Wallet as RustWallet},
-    Response, WalletMethod, WalletOptions,
+    Response, WalletMethod, WalletOptions, call_wallet_method as rust_call_wallet_method,
+    iota_sdk::wallet::{Wallet as RustWallet, events::types::WalletEventType},
 };
 use pyo3::{prelude::*, types::PyTuple};
 use tokio::sync::RwLock;
 
 use crate::{
+    SecretManager,
     client::Client,
     error::{Error, Result},
-    SecretManager,
 };
 
 #[pyclass]
@@ -81,7 +80,7 @@ pub fn listen_wallet(wallet: &Wallet, events: Vec<u8>, handler: PyObject) {
             .listen(rust_events, move |event| {
                 let event_string = serde_json::to_string(&event).expect("json to string error");
                 Python::with_gil(|py| {
-                    let args = PyTuple::new(py, &[event_string]);
+                    let args = PyTuple::new(py, &[event_string]).expect("failed to convert event string");
                     handler.call1(py, args).expect("failed to call python callback");
                 });
             })

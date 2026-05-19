@@ -10,8 +10,8 @@ use crate::{
         address::Address,
         input::INPUT_COUNT_MAX,
         output::{
-            unlock_condition::StorageDepositReturnUnlockCondition, AliasOutputBuilder, AliasTransition,
-            FoundryOutputBuilder, NativeTokens, NftOutputBuilder, Output, OutputId, Rent, TokenId,
+            AliasOutputBuilder, AliasTransition, FoundryOutputBuilder, NativeTokens, NftOutputBuilder, Output,
+            OutputId, Rent, TokenId, unlock_condition::StorageDepositReturnUnlockCondition,
         },
     },
 };
@@ -24,7 +24,7 @@ pub(crate) fn sdruc_not_expired(output: &Output, current_time: u32) -> Option<&S
     unlock_conditions.storage_deposit_return().and_then(|sdr| {
         let expired = unlock_conditions
             .expiration()
-            .map_or(false, |expiration| current_time >= expiration.timestamp());
+            .is_some_and(|expiration| current_time >= expiration.timestamp());
 
         // We only have to send the storage deposit return back if the output is not expired
         if !expired { Some(sdr) } else { None }
@@ -122,11 +122,7 @@ impl AmountSelection {
         if self.inputs_sum > self.outputs_sum {
             let diff = self.inputs_sum - self.outputs_sum;
 
-            if self.remainder_amount > diff {
-                self.remainder_amount - diff
-            } else {
-                0
-            }
+            self.remainder_amount.saturating_sub(diff)
         } else if self.inputs_sum < self.outputs_sum {
             self.outputs_sum - self.inputs_sum
         } else if self.native_tokens_remainder {
@@ -252,8 +248,8 @@ impl InputSelection {
                 .map(|chain_id| {
                     self.automatically_transitioned
                         .get(chain_id)
-                        .map_or(false, |alias_transition| {
-                            alias_transition.map_or(true, |alias_transition| alias_transition.is_state())
+                        .is_some_and(|alias_transition| {
+                            alias_transition.is_none_or(|alias_transition| alias_transition.is_state())
                         })
                 })
                 .unwrap_or(false)
@@ -328,7 +324,7 @@ impl InputSelection {
         log::debug!("Ordering inputs from low to high amount");
         // Sort inputs per amount, low to high.
         self.available_inputs
-            .sort_by(|left, right| left.output.amount().cmp(&right.output.amount()));
+            .sort_by_key(|left| left.output.amount());
 
         if let Some(r) = self.fulfill_amount_requirement_inner(&mut amount_selection) {
             return Ok(r);
@@ -360,7 +356,7 @@ impl InputSelection {
             log::debug!("Ordering inputs from high to low amount");
             // Sort inputs per amount, high to low.
             self.available_inputs
-                .sort_by(|left, right| right.output.amount().cmp(&left.output.amount()));
+                .sort_by_key(|right| std::cmp::Reverse(right.output.amount()));
 
             if let Some(r) = self.fulfill_amount_requirement_inner(&mut amount_selection) {
                 return Ok(r);

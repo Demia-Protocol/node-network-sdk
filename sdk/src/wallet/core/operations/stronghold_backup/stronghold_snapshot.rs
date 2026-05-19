@@ -5,17 +5,18 @@ use std::{collections::HashMap, path::Path, sync::atomic::Ordering};
 
 use crate::{
     client::{
-        constants::IOTA_COIN_TYPE, secret::SecretManagerConfig, storage::StorageAdapter, stronghold::StrongholdAdapter,
-        Error as ClientError,
+        Error as ClientError, constants::IOTA_COIN_TYPE, secret::SecretManagerConfig, storage::StorageAdapter,
+        stronghold::StrongholdAdapter,
     },
     types::TryFromDto,
     wallet::{
+        ClientOptions, Error as WalletError, Wallet,
         account::{AccountDetails, AccountDetailsDto},
         migration::{
-            chrysalis::{migrate_from_chrysalis_data, to_chrysalis_key, CHRYSALIS_STORAGE_KEY},
-            latest_backup_migration_version, migrate, MigrationData, MIGRATION_VERSION_KEY,
+            MIGRATION_VERSION_KEY, MigrationData,
+            chrysalis::{CHRYSALIS_STORAGE_KEY, migrate_from_chrysalis_data, to_chrysalis_key},
+            latest_backup_migration_version, migrate,
         },
-        ClientOptions, Error as WalletError, Wallet,
     },
 };
 
@@ -44,7 +45,7 @@ impl<S: 'static + SecretManagerConfig> Wallet<S> {
 
         let mut serialized_accounts = Vec::new();
         for account in self.accounts.read().await.iter() {
-            serialized_accounts.push(serde_json::to_value(&AccountDetailsDto::from(
+            serialized_accounts.push(serde_json::to_value(AccountDetailsDto::from(
                 &*account.details().await,
             ))?);
         }

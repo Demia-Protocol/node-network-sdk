@@ -1,13 +1,13 @@
 // Copyright 2022 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use instant::Instant;
+use web_time::Instant;
 
 use crate::{
     client::secret::SecretManage,
     wallet::{
         account::{
-            constants::PARALLEL_REQUESTS_AMOUNT, types::address::AddressWithUnspentOutputs, Account, OutputData,
+            Account, OutputData, constants::PARALLEL_REQUESTS_AMOUNT, types::address::AddressWithUnspentOutputs,
         },
         task,
     },

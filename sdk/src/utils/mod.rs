@@ -4,9 +4,9 @@
 #[cfg(feature = "serde")]
 pub mod serde;
 
-#[cfg(feature = "instant")]
+#[cfg(feature = "web-time")]
 pub fn unix_timestamp_now() -> core::time::Duration {
-    instant::SystemTime::now()
-        .duration_since(instant::SystemTime::UNIX_EPOCH)
+    web_time::SystemTime::now()
+        .duration_since(web_time::SystemTime::UNIX_EPOCH)
         .expect("time went backwards")
 }

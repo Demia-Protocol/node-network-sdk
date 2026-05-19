@@ -65,12 +65,7 @@ impl InputSelection {
         alias_transition: AliasTransition,
     ) -> Result<Vec<(InputSigningData, Option<AliasTransition>)>, Error> {
         // Check that the alias is not burned when a state transition is required.
-        if alias_transition.is_state()
-            && self
-                .burn
-                .as_ref()
-                .map_or(false, |burn| burn.aliases.contains(&alias_id))
-        {
+        if alias_transition.is_state() && self.burn.as_ref().is_some_and(|burn| burn.aliases.contains(&alias_id)) {
             return Err(Error::UnfulfillableRequirement(Requirement::Alias(
                 alias_id,
                 alias_transition,
@@ -84,10 +79,10 @@ impl InputSelection {
 
         // If a state transition is not required and the alias has already been selected, no additional check has to be
         // performed.
-        if !alias_transition.is_state() && selected_input.is_some() {
+        if !alias_transition.is_state() && let Some(input) = selected_input {
             log::debug!(
                 "{alias_id:?}/{alias_transition:?} requirement already fulfilled by {:?}",
-                selected_input.unwrap().output_id()
+                input.output_id()
             );
             return Ok(Vec::new());
         }

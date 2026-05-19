@@ -4,10 +4,10 @@
 use crate::types::block::{
     address::Address,
     output::{
+        AliasId, NftId,
         unlock_condition::{
             AddressUnlockCondition, GovernorAddressUnlockCondition, StateControllerAddressUnlockCondition,
         },
-        AliasId, NftId,
     },
     rand::address::{rand_address, rand_alias_address, rand_nft_address},
 };
@@ -23,7 +23,7 @@ pub fn rand_state_controller_address_unlock_condition_different_from(
 ) -> StateControllerAddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Alias(mut alias_address) = &mut address {
+    if let &mut Address::Alias(mut alias_address) = &mut address {
         while alias_address.alias_id() == alias_id {
             alias_address = rand_alias_address();
         }
@@ -36,7 +36,7 @@ pub fn rand_state_controller_address_unlock_condition_different_from(
 pub fn rand_governor_address_unlock_condition_different_from(alias_id: &AliasId) -> GovernorAddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Alias(mut alias_address) = &mut address {
+    if let &mut Address::Alias(mut alias_address) = &mut address {
         while alias_address.alias_id() == alias_id {
             alias_address = rand_alias_address();
         }
@@ -49,7 +49,7 @@ pub fn rand_governor_address_unlock_condition_different_from(alias_id: &AliasId)
 pub fn rand_address_unlock_condition_different_from(nft_id: &NftId) -> AddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Nft(mut nft_address) = &mut address {
+    if let &mut Address::Nft(mut nft_address) = &mut address {
         while nft_address.nft_id() == nft_id {
             nft_address = rand_nft_address();
         }

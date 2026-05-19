@@ -6,9 +6,9 @@ use serde::{Deserialize, Serialize};
 use crate::{
     client::api::input_selection::{Burn, BurnDto},
     types::block::{
+        Error,
         output::OutputId,
         payload::{dto::TaggedDataPayloadDto, tagged_data::TaggedDataPayload},
-        Error,
     },
     wallet::account::types::address::AccountAddress,
 };
@@ -64,10 +64,11 @@ pub struct TransactionOptionsDto {
 
 #[allow(clippy::enum_variant_names)]
 /// The strategy to use for the remainder value management when sending funds.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "strategy", content = "value")]
 pub enum RemainderValueStrategy {
     /// Keep the remainder value on the source address.
+    #[default]
     ReuseAddress,
     /// Move the remainder value to a change address.
     ChangeAddress,
@@ -75,8 +76,3 @@ pub enum RemainderValueStrategy {
     CustomAddress(AccountAddress),
 }
 
-impl Default for RemainderValueStrategy {
-    fn default() -> Self {
-        Self::ReuseAddress
-    }
-}

@@ -17,9 +17,9 @@ use crate::{
         output::{FoundryId, Output, OutputId, OutputMetadata},
     },
     wallet::account::{
+        Account, Balance,
         constants::MIN_SYNC_INTERVAL,
         types::{AddressWithUnspentOutputs, OutputData},
-        Account, Balance,
     },
 };
 
@@ -55,7 +55,7 @@ where
         };
 
         log::debug!("[SYNC] start syncing with {:?}", options);
-        let syc_start_time = instant::Instant::now();
+        let syc_start_time = web_time::Instant::now();
 
         // Prevent syncing the account multiple times simultaneously
         let time_now = crate::utils::unix_timestamp_now().as_millis();

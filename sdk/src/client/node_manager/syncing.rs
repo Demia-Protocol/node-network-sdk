@@ -31,14 +31,17 @@ impl ClientInner {
         node_manager
             .healthy_nodes
             .read()
-            .map_or(HashSet::new(), |healthy_nodes| {
-                node_manager
-                    .nodes
-                    .iter()
-                    .filter(|node| !healthy_nodes.contains_key(node))
-                    .cloned()
-                    .collect()
-            })
+            .map_or_else(
+                |_| HashSet::new(),
+                |healthy_nodes| {
+                    node_manager
+                        .nodes
+                        .iter()
+                        .filter(|node| !healthy_nodes.contains_key(node))
+                        .cloned()
+                        .collect()
+                },
+            )
     }
 }
 

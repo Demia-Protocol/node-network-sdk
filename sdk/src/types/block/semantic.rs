@@ -8,11 +8,11 @@ use hashbrown::{HashMap, HashSet};
 use primitive_types::U256;
 
 use crate::types::block::{
+    Error,
     address::Address,
     output::{ChainId, FoundryId, InputsCommitment, NativeTokens, Output, OutputId, TokenId},
     payload::transaction::{RegularTransactionEssence, TransactionEssence, TransactionId},
     unlock::Unlocks,
-    Error,
 };
 
 /// Errors related to ledger types.
@@ -41,12 +41,13 @@ impl std::error::Error for ConflictError {}
 
 /// Represents the different reasons why a transaction can conflict with the ledger state.
 #[repr(u8)]
-#[derive(Debug, Copy, Clone, Eq, PartialEq, packable::Packable)]
+#[derive(Default, Debug, Copy, Clone, Eq, PartialEq, packable::Packable)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[packable(unpack_error = ConflictError)]
 #[packable(tag_type = u8, with_error = ConflictError::InvalidConflict)]
 pub enum ConflictReason {
     /// The block has no conflict.
+    #[default]
     None = 0,
     /// The referenced Utxo was already spent.
     InputUtxoAlreadySpent = 1,
@@ -132,11 +133,6 @@ impl TryFrom<u8> for ConflictReason {
     }
 }
 
-impl Default for ConflictReason {
-    fn default() -> Self {
-        Self::None
-    }
-}
 
 ///
 pub struct ValidationContext<'a> {
@@ -354,7 +350,7 @@ pub fn semantic_validation(
     let mut native_token_ids = HashSet::new();
 
     // Validation of input native tokens.
-    for (token_id, _input_amount) in context.input_native_tokens.iter() {
+    for token_id in context.input_native_tokens.keys() {
         native_token_ids.insert(token_id);
     }
 

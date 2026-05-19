@@ -8,7 +8,7 @@ use std::collections::HashSet;
 
 use crate::{
     client::secret::SecretManage,
-    wallet::account::{operations::syncing::SyncOptions, types::address::AddressWithUnspentOutputs, Account},
+    wallet::account::{Account, operations::syncing::SyncOptions, types::address::AddressWithUnspentOutputs},
 };
 
 impl<S: 'static + SecretManage> Account<S>
@@ -55,15 +55,13 @@ where
         let addresses_with_unspent_outputs = self.addresses_with_unspent_outputs().await?;
         let mut addresses_with_old_output_ids = Vec::new();
         for address in addresses_before_syncing {
-            let mut output_ids = Vec::new();
             // Add currently known unspent output ids, so we can later compare them with the new output ids and see if
             // one got spent (is missing in the new returned output ids)
-            if let Some(address_with_unspent_outputs) = addresses_with_unspent_outputs
+            let output_ids = addresses_with_unspent_outputs
                 .iter()
                 .find(|a| a.address == address.address)
-            {
-                output_ids = address_with_unspent_outputs.output_ids.to_vec();
-            }
+                .map(|a| a.output_ids.to_vec())
+                .unwrap_or_default();
             addresses_with_old_output_ids.push(AddressWithUnspentOutputs {
                 address: address.address,
                 key_index: address.key_index,

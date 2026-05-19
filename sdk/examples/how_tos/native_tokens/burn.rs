@@ -17,9 +17,9 @@
 //! ```
 
 use iota_sdk::{
+    U256, Wallet,
     types::block::output::{NativeToken, TokenId},
     wallet::Result,
-    Wallet, U256,
 };
 
 // The minimum available native token amount to search for in the account
@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
     }
 
     let wallet = Wallet::builder()
-        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
         .finish()
         .await?;
     let alias = "Alice";

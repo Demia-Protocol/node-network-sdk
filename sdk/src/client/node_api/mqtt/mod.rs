@@ -11,15 +11,15 @@ use std::{sync::Arc, time::Instant};
 use crypto::utils;
 use log::warn;
 use packable::PackableExt;
-use rumqttc::{AsyncClient, Broker, Event, EventLoop, Incoming, MqttOptions, NetworkOptions, QoS, Filter, Transport};
+use rumqttc::{AsyncClient, Broker, Event, EventLoop, Filter, Incoming, MqttOptions, NetworkOptions, QoS, Transport};
 use tokio::sync::watch::Receiver as WatchReceiver;
 
 pub use self::{error::Error, types::*};
 use crate::{
     client::{Client, ClientInner},
     types::block::{
-        payload::{milestone::ReceiptMilestoneOption, Payload},
         Block,
+        payload::{Payload, milestone::ReceiptMilestoneOption},
     },
 };
 
@@ -66,9 +66,10 @@ async fn set_mqtt_client(client: &Client) -> Result<(), Error> {
                 node_manager
                     .healthy_nodes
                     .read()
-                    .map_or(node_manager.nodes.clone(), |healthy_nodes| {
-                        healthy_nodes.iter().map(|(node, _)| node.clone()).collect()
-                    })
+                    .map_or_else(
+                        |_| node_manager.nodes.clone(),
+                        |healthy_nodes| healthy_nodes.keys().cloned().collect(),
+                    )
             }
             #[cfg(target_family = "wasm")]
             {

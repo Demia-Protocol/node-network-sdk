@@ -12,7 +12,7 @@
 //! cargo run --release --all-features --example create_alias
 //! ```
 
-use iota_sdk::{wallet::Result, Wallet};
+use iota_sdk::{Wallet, wallet::Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -24,7 +24,7 @@ async fn main() -> Result<()> {
     }
 
     let wallet = Wallet::builder()
-        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
         .finish()
         .await?;
     let account = wallet.get_account("Alice").await?;

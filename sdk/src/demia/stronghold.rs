@@ -1,11 +1,14 @@
-use iota_stronghold::{procedures::{self, AeadCipher, KeyType, Sha2Hash}, ClientVault, Location};
 use crypto::{
-    ciphers::{traits::Aead, aes_gcm::Aes256Gcm},
+    ciphers::{aes_gcm::Aes256Gcm, traits::Aead},
     keys::x25519,
 };
-use crate::client::stronghold::{Error, StrongholdAdapter, PRIVATE_DATA_CLIENT_PATH};
+use iota_stronghold::{
+    ClientVault, Location,
+    procedures::{self, AeadCipher, KeyType, Sha2Hash},
+};
 
 use super::EncryptedData;
+use crate::client::stronghold::{Error, PRIVATE_DATA_CLIENT_PATH, StrongholdAdapter};
 
 /// The client path for X25519 shared keys
 pub(super) const DIFFIE_HELLMAN_SHARED_KEY_PATH: &[u8] = b"dh-shared_key";
@@ -20,19 +23,21 @@ impl StrongholdAdapter {
     /// Retrieve a vault client
     pub async fn vault_client<P: AsRef<[u8]>>(&mut self, path: P) -> Result<ClientVault> {
         // Modified stronghold to pub(crate)
-        self.stronghold.lock()
+        self.stronghold
+            .lock()
             .await
             .get_client(PRIVATE_DATA_CLIENT_PATH)
             .map(|client| Ok(client.vault(path)))?
     }
 
     /// Encrypt a data packet
-    pub async fn x25519_encrypt(&self, public_key: x25519::PublicKey, private_key: Location, msg: Vec<u8>) -> Result<EncryptedData> {
-        let client = self
-            .stronghold
-            .lock()
-            .await
-            .get_client(PRIVATE_DATA_CLIENT_PATH)?;
+    pub async fn x25519_encrypt(
+        &self,
+        public_key: x25519::PublicKey,
+        private_key: Location,
+        msg: Vec<u8>,
+    ) -> Result<EncryptedData> {
+        let client = self.stronghold.lock().await.get_client(PRIVATE_DATA_CLIENT_PATH)?;
 
         let shared_key_path = Location::generic(DIFFIE_HELLMAN_SHARED_KEY_PATH, DIFFIE_HELLMAN_SHARED_KEY_PATH);
         let shared_output_path = Location::generic(DIFFIE_HELLMAN_OUTPUT_PATH, DIFFIE_HELLMAN_OUTPUT_PATH);
@@ -87,21 +92,12 @@ impl StrongholdAdapter {
         tag.clone_from_slice(&resp.drain(..Aes256Gcm::TAG_LENGTH).collect::<Vec<u8>>());
         data.clone_from_slice(resp.as_slice());
 
-        Ok(EncryptedData::new(
-            pub_key_slice,
-            nonce,
-            tag,
-            data,
-        ))
+        Ok(EncryptedData::new(pub_key_slice, nonce, tag, data))
     }
 
     /// Decrypt a data packet
     pub async fn x25519_decrypt(&self, private_key: Location, msg: EncryptedData) -> Result<Vec<u8>> {
-        let client = self
-            .stronghold
-            .lock()
-            .await
-            .get_client(PRIVATE_DATA_CLIENT_PATH)?;
+        let client = self.stronghold.lock().await.get_client(PRIVATE_DATA_CLIENT_PATH)?;
 
         let shared_key_path = Location::generic(DIFFIE_HELLMAN_SHARED_KEY_PATH, DIFFIE_HELLMAN_SHARED_KEY_PATH);
         let shared_output_path = Location::generic(DIFFIE_HELLMAN_OUTPUT_PATH, DIFFIE_HELLMAN_OUTPUT_PATH);
