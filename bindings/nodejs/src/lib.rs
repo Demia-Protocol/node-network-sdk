@@ -1,6 +1,8 @@
 // Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+#![allow(clippy::result_large_err)]
+
 mod client;
 mod secret_manager;
 mod wallet;

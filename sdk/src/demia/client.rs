@@ -8,7 +8,7 @@ impl Client {
     /// Finds a list of blocks by their TagId. Returns a list of blocks containing the tagId.
     /// GET /api/core/v2/tagged/{tagId}
     pub async fn get_blocks_by_tag(&self, tag: &TagId) -> Result<Vec<Block>> {
-        let path = &format!("api/core/v2/tagged/{}", tag.to_string());
+        let path = &format!("api/core/v2/tagged/{tag}");
         let resp = self
             .node_manager
             .read()

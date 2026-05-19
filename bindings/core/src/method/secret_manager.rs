@@ -59,7 +59,7 @@ pub enum SecretManagerMethod {
     #[serde(rename_all = "camelCase")]
     SignTransaction {
         /// Prepared transaction data
-        prepared_transaction_data: PreparedTransactionDataDto,
+        prepared_transaction_data: Box<PreparedTransactionDataDto>,
     },
     /// Store a mnemonic in the Stronghold vault
     #[cfg(feature = "stronghold")]

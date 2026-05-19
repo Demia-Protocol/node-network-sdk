@@ -132,13 +132,12 @@ impl InputSelection {
             }
 
             // Add an issuer requirement if the issuer feature is present and the chain output is created.
-            if is_created {
-                if let Some(issuer) = output.immutable_features().and_then(Features::issuer) {
+            if is_created
+                && let Some(issuer) = output.immutable_features().and_then(Features::issuer) {
                     let requirement = Requirement::Issuer(*issuer.address());
                     log::debug!("Adding {requirement:?} from output");
                     self.requirements.push(requirement);
                 }
-            }
         }
     }
 

@@ -239,19 +239,17 @@ fn migrate_feature(feature: &mut serde_json::Value) -> Result<()> {
 }
 
 fn check_omitted_str(field: &str, value: &mut serde_json::Map<String, serde_json::Value>, empty_val: &str) {
-    if let Some(f) = value.get(field) {
-        if f.is_null() || matches!(f.as_str(), Some(v) if v == empty_val) {
+    if let Some(f) = value.get(field)
+        && (f.is_null() || matches!(f.as_str(), Some(v) if v == empty_val)) {
             value.remove(field);
         }
-    }
 }
 
 fn check_omitted_list(field: &str, value: &mut serde_json::Map<String, serde_json::Value>) {
-    if let Some(f) = value.get(field) {
-        if f.is_null() || matches!(f.as_array().map(Vec::as_slice), Some(&[])) {
+    if let Some(f) = value.get(field)
+        && (f.is_null() || matches!(f.as_array().map(Vec::as_slice), Some(&[]))) {
             value.remove(field);
         }
-    }
 }
 
 fn check_omitted_opt(field: &str, value: &mut serde_json::Map<String, serde_json::Value>) {

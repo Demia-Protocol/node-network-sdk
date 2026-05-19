@@ -54,8 +54,8 @@ impl AccountDetails {
             .filter(|(_, o)| o.output.is_basic() || o.output.is_nft())
         {
             // Don't use outputs that are locked for other transactions
-            if !self.locked_outputs.contains(output_id) && self.outputs.contains_key(output_id) {
-                if let Some(unlock_conditions) = output_data.output.unlock_conditions() {
+            if !self.locked_outputs.contains(output_id) && self.outputs.contains_key(output_id)
+                && let Some(unlock_conditions) = output_data.output.unlock_conditions() {
                     // If there is a single [UnlockCondition], then it's an
                     // [AddressUnlockCondition] and we own it already without
                     // further restrictions
@@ -113,7 +113,6 @@ impl AccountDetails {
                         }
                     }
                 }
-            }
         }
         log::debug!(
             "[OUTPUT_CLAIMING] available outputs to claim: {}",
@@ -160,17 +159,14 @@ where
                 }
             }
             // Don't use outputs that are locked for other transactions
-            if !account_details.locked_outputs.contains(output_id) {
-                if let Some(output) = account_details.outputs.get(output_id) {
-                    if let Output::Basic(basic_output) = &output.output {
-                        if basic_output.unlock_conditions().len() == 1 {
+            if !account_details.locked_outputs.contains(output_id)
+                && let Some(output) = account_details.outputs.get(output_id)
+                    && let Output::Basic(basic_output) = &output.output
+                        && basic_output.unlock_conditions().len() == 1 {
                             // Store outputs with [`AddressUnlockCondition`] alone, because they could be used as
                             // additional input, if required
                             basic_outputs.push(output_data.clone());
                         }
-                    }
-                }
-            }
         }
         log::debug!("[OUTPUT_CLAIMING] available basic outputs: {}", basic_outputs.len());
         Ok(basic_outputs)
@@ -233,11 +229,10 @@ where
 
         let mut outputs_to_claim = Vec::new();
         for output_id in output_ids_to_claim {
-            if let Some(output_data) = account_details.unspent_outputs.get(&output_id) {
-                if !account_details.locked_outputs.contains(&output_id) {
+            if let Some(output_data) = account_details.unspent_outputs.get(&output_id)
+                && !account_details.locked_outputs.contains(&output_id) {
                     outputs_to_claim.push(output_data.clone());
                 }
-            }
         }
 
         if outputs_to_claim.is_empty() {

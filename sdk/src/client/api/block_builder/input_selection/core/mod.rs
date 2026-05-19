@@ -493,8 +493,8 @@ impl InputSelection {
                             false
                         }
                     });
-                    if let Some(foundry_input) = foundry_input {
-                        if let Err(err) = FoundryOutput::transition_inner(
+                    if let Some(foundry_input) = foundry_input
+                        && let Err(err) = FoundryOutput::transition_inner(
                             foundry_input.output.as_foundry(),
                             foundry_output,
                             input_native_tokens_builder.deref(),
@@ -505,7 +505,6 @@ impl InputSelection {
                                 foundry_output.id(),
                             )));
                         }
-                    }
                 }
                 Output::Nft(nft_output) => {
                     // Null id outputs are just minted and can't be a transition

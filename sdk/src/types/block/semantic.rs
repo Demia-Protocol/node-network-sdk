@@ -261,8 +261,8 @@ pub fn semantic_validation(
             return Ok(ConflictReason::TimelockNotExpired);
         }
 
-        if !unlock_conditions.is_expired(context.milestone_timestamp) {
-            if let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return() {
+        if !unlock_conditions.is_expired(context.milestone_timestamp)
+            && let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return() {
                 let amount = context
                     .storage_deposit_returns
                     .entry(*storage_deposit_return.return_address())
@@ -272,7 +272,6 @@ pub fn semantic_validation(
                     .checked_add(storage_deposit_return.amount())
                     .ok_or(Error::StorageDepositReturnOverflow)?;
             }
-        }
 
         context.input_amount = context
             .input_amount
@@ -308,11 +307,10 @@ pub fn semantic_validation(
             _ => return Err(Error::UnsupportedOutputKind(created_output.kind())),
         };
 
-        if let Some(sender) = features.sender() {
-            if !context.unlocked_addresses.contains(sender.address()) {
+        if let Some(sender) = features.sender()
+            && !context.unlocked_addresses.contains(sender.address()) {
                 return Ok(ConflictReason::UnverifiedSender);
             }
-        }
 
         context.output_amount = context
             .output_amount

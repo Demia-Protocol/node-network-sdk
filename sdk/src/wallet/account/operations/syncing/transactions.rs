@@ -90,13 +90,11 @@ where
             let TransactionEssence::Regular(essence) = transaction.payload.essence();
             let mut input_got_spent = false;
             for input in essence.inputs() {
-                if let Input::Utxo(input) = input {
-                    if let Some(input) = account_details.outputs.get(input.output_id()) {
-                        if input.is_spent {
+                if let Input::Utxo(input) = input
+                    && let Some(input) = account_details.outputs.get(input.output_id())
+                        && input.is_spent {
                             input_got_spent = true;
                         }
-                    }
-                }
             }
 
             if let Some(block_id) = transaction.block_id {

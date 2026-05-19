@@ -55,7 +55,7 @@ async fn create_account() -> Result<()> {
     let response = wallet
         .call_method(WalletMethod::CallAccountMethod {
             account_id: AccountIdentifier::Index(0),
-            method: AccountMethod::UnspentOutputs { filter_options: None },
+            method: Box::new(AccountMethod::UnspentOutputs { filter_options: None }),
         })
         .await;
 

@@ -17,8 +17,8 @@ pub(crate) fn is_alias_transition<'a>(
         let alias_id = alias_input.alias_id_non_null(&input_id);
         // Checks if the alias exists in the outputs and gets the transition type.
         for output in outputs.iter() {
-            if let Output::Alias(alias_output) = output {
-                if *alias_output.alias_id() == alias_id {
+            if let Output::Alias(alias_output) = output
+                && *alias_output.alias_id() == alias_id {
                     if alias_output.state_index() == alias_input.state_index() {
                         // Governance transition.
                         return Some(AliasTransition::Governance);
@@ -27,13 +27,11 @@ pub(crate) fn is_alias_transition<'a>(
                         return Some(AliasTransition::State);
                     }
                 }
-            }
         }
-        if let Some(burn) = burn.into() {
-            if burn.aliases().contains(&alias_id) {
+        if let Some(burn) = burn.into()
+            && burn.aliases().contains(&alias_id) {
                 return Some(AliasTransition::Governance);
             }
-        }
     }
     None
 }

@@ -3,6 +3,12 @@
 
 //! Core library for iota-sdk bindings
 
+// `Error::Client` wraps a 128-byte `iota_sdk::client::Error` from a deprecated
+// upstream. Boxing it propagates through every From impl and call site for
+// stylistic gain only; consistent with `#[allow(clippy::large_enum_variant)]`
+// already on the Error enum.
+#![allow(clippy::result_large_err)]
+
 mod error;
 mod method;
 mod method_handler;

@@ -370,19 +370,15 @@ impl StrongholdAdapter {
             })
         {
             return match err {
-                iota_stronghold::procedures::ProcedureError::Engine(ref e) => {
-                    // Custom error for missing vault error: https://github.com/iotaledger/stronghold.rs/blob/7f0a2e0637394595e953f9071fa74b1d160f51ec/client/src/types/error.rs#L170
-                    if e.to_string().contains("does not exist") {
-                        // Actually the seed, derived from the mnemonic, is not stored.
-                        Err(Error::MnemonicMissing)
-                    } else {
-                        Err(err.into())
-                    }
+                // Custom error for missing vault error: https://github.com/iotaledger/stronghold.rs/blob/7f0a2e0637394595e953f9071fa74b1d160f51ec/client/src/types/error.rs#L170
+                iota_stronghold::procedures::ProcedureError::Engine(ref e)
+                    if e.to_string().contains("does not exist") =>
+                {
+                    // Actually the seed, derived from the mnemonic, is not stored.
+                    Err(Error::MnemonicMissing)
                 }
-                _ => {
-                    Err(err.into())
-                }
-            }
+                _ => Err(err.into()),
+            };
         };
 
         Ok(())

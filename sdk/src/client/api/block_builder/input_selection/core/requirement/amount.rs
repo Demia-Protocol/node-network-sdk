@@ -52,11 +52,10 @@ pub(crate) fn amount_sums(
     for output in outputs {
         outputs_sum += output.amount();
 
-        if let Output::Basic(output) = output {
-            if let Some(address) = output.simple_deposit_address() {
+        if let Output::Basic(output) = output
+            && let Some(address) = output.simple_deposit_address() {
                 *outputs_sdr.entry(*address).or_default() += output.amount();
             }
-        }
     }
 
     // TODO explanation about that

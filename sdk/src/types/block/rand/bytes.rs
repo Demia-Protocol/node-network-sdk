@@ -3,7 +3,7 @@
 
 use alloc::vec::Vec;
 
-use rand::{random, Rng};
+use rand::random;
 
 /// Generates a [`Vec`] of random bytes with a given length.
 pub fn rand_bytes(len: usize) -> Vec<u8> {

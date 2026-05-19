@@ -216,11 +216,10 @@ where
         let foundry_id = FoundryId::from(native_token_id);
 
         for output_data in self.details().await.outputs().values() {
-            if let Output::Foundry(foundry_output) = &output_data.output {
-                if foundry_output.id() == foundry_id {
+            if let Output::Foundry(foundry_output) = &output_data.output
+                && foundry_output.id() == foundry_id {
                     return Ok(output_data.output.clone());
                 }
-            }
         }
 
         // Foundry was not found in the account, try to get it from the node
@@ -349,22 +348,19 @@ impl AccountInner {
                     _ => {}
                 }
 
-                if let Some(lower_bound_booked_timestamp) = filter.lower_bound_booked_timestamp {
-                    if output.metadata.milestone_timestamp_booked() < lower_bound_booked_timestamp {
+                if let Some(lower_bound_booked_timestamp) = filter.lower_bound_booked_timestamp
+                    && output.metadata.milestone_timestamp_booked() < lower_bound_booked_timestamp {
                         continue;
                     }
-                }
-                if let Some(upper_bound_booked_timestamp) = filter.upper_bound_booked_timestamp {
-                    if output.metadata.milestone_timestamp_booked() > upper_bound_booked_timestamp {
+                if let Some(upper_bound_booked_timestamp) = filter.upper_bound_booked_timestamp
+                    && output.metadata.milestone_timestamp_booked() > upper_bound_booked_timestamp {
                         continue;
                     }
-                }
 
-                if let Some(output_types) = &filter.output_types {
-                    if !output_types.contains(&output.output.kind()) {
+                if let Some(output_types) = &filter.output_types
+                    && !output_types.contains(&output.output.kind()) {
                         continue;
                     }
-                }
 
                 // If ids are provided, only return them and no other outputs.
                 if filter.alias_ids.is_none() && filter.foundry_ids.is_none() && filter.nft_ids.is_none() {

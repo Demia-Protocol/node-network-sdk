@@ -123,8 +123,8 @@ where
 
         if let Some(largest_account_index) = largest_account_index_opt {
             for i in 0..accounts.len() {
-                if let Some(account) = accounts.get(i) {
-                    if *account.details().await.index() == largest_account_index {
+                if let Some(account) = accounts.get(i)
+                    && *account.details().await.index() == largest_account_index {
                         let _ = accounts.remove(i);
 
                         #[cfg(feature = "storage")]
@@ -136,7 +136,6 @@ where
 
                         return Ok(());
                     }
-                }
             }
         }
 

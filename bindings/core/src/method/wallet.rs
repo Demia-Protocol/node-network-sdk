@@ -64,7 +64,7 @@ pub enum WalletMethod {
         /// The account identifier.
         account_id: AccountIdentifier,
         /// The account method to call.
-        method: AccountMethod,
+        method: Box<AccountMethod>,
     },
     /// Backup storage. Password must be the current one, when Stronghold is used as SecretManager.
     /// Expected response: [`Ok`](crate::Response::Ok)

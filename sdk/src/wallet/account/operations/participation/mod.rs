@@ -95,11 +95,10 @@ where
             if let Ok(participations) = Participations::from_bytes(&mut metadata.data()) {
                 for participation in participations.participations {
                     // Skip events that aren't in `event_ids` if not None
-                    if let Some(event_ids) = event_ids.as_ref() {
-                        if !event_ids.contains(&participation.event_id) {
+                    if let Some(event_ids) = event_ids.as_ref()
+                        && !event_ids.contains(&participation.event_id) {
                             continue;
                         }
-                    }
                     match events.entry(participation.event_id) {
                         Entry::Vacant(entry) => {
                             entry.insert(vec![output_data.output_id]);
@@ -121,11 +120,10 @@ where
         for (output_id, output_status_response) in &spent_cached_outputs {
             for (event_id, participation) in &output_status_response.participations {
                 // Skip events that aren't in `event_ids` if not None
-                if let Some(event_ids) = event_ids.as_ref() {
-                    if !event_ids.contains(event_id) {
+                if let Some(event_ids) = event_ids.as_ref()
+                    && !event_ids.contains(event_id) {
                         continue;
                     }
-                }
                 match participations.entry(*event_id) {
                     Entry::Vacant(entry) => {
                         entry.insert(HashMap::from([(*output_id, participation.clone())]));
@@ -146,14 +144,13 @@ where
 
             output_ids.retain(|output_id| {
                 // Skip if participations already contains this output id with participation for this event
-                if let Some(p) = participations.get(&event_id) {
-                    if p.contains_key(output_id) {
+                if let Some(p) = participations.get(&event_id)
+                    && p.contains_key(output_id) {
                         log::debug!(
                             "[get_participation_overview] skip requesting already known {output_id} for event {event_id}",
                         );
                         return false;
                     }
-                }
                 true
             });
 
@@ -190,11 +187,10 @@ where
                         }
                         for (event_id, participation) in status.participations {
                             // Skip events that aren't in `event_ids` if not None
-                            if let Some(event_ids) = event_ids.as_ref() {
-                                if !event_ids.contains(&event_id) {
+                            if let Some(event_ids) = event_ids.as_ref()
+                                && !event_ids.contains(&event_id) {
                                     continue;
                                 }
-                            }
                             match participations.entry(event_id) {
                                 Entry::Vacant(entry) => {
                                     entry.insert(HashMap::from([(output_id, participation)]));
@@ -285,11 +281,10 @@ where
                 }
             } else {
                 // If not found in local events, try to get the event status from the client.
-                if let Ok(event_status) = self.get_participation_event_status(&participation.event_id).await {
-                    if event_status.status() == "ended" {
+                if let Ok(event_status) = self.get_participation_event_status(&participation.event_id).await
+                    && event_status.status() == "ended" {
                         participations.remove(&participation.event_id);
                     }
-                }
             }
         }
 

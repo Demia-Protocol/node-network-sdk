@@ -393,11 +393,10 @@ impl StateTransitionVerifier for NftOutput {
             return Err(StateTransitionError::NonZeroCreatedId);
         }
 
-        if let Some(issuer) = next_state.immutable_features().issuer() {
-            if !context.unlocked_addresses.contains(issuer.address()) {
+        if let Some(issuer) = next_state.immutable_features().issuer()
+            && !context.unlocked_addresses.contains(issuer.address()) {
                 return Err(StateTransitionError::IssuerNotUnlocked);
             }
-        }
 
         Ok(())
     }
@@ -472,11 +471,10 @@ impl Packable for NftOutput {
 
 fn verify_unlock_conditions(unlock_conditions: &UnlockConditions, nft_id: &NftId) -> Result<(), Error> {
     if let Some(unlock_condition) = unlock_conditions.address() {
-        if let Address::Nft(nft_address) = unlock_condition.address() {
-            if !nft_id.is_null() && nft_address.nft_id() == nft_id {
+        if let Address::Nft(nft_address) = unlock_condition.address()
+            && !nft_id.is_null() && nft_address.nft_id() == nft_id {
                 return Err(Error::SelfDepositNft(*nft_id));
             }
-        }
     } else {
         return Err(Error::MissingAddressUnlockCondition);
     }

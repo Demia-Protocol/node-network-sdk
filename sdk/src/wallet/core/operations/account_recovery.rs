@@ -79,14 +79,14 @@ where
 
         for account in accounts.iter() {
             let account_index = *account.details().await.index();
-            let mut keep_account = false;
-
-            if let Some(max_account_index_to_keep) = max_account_index_to_keep {
-                if account_index <= max_account_index_to_keep {
-                    new_accounts.push((account_index, account.clone()));
-                    keep_account = true;
-                }
-            }
+            let keep_account = if let Some(max_account_index_to_keep) = max_account_index_to_keep
+                && account_index <= max_account_index_to_keep
+            {
+                new_accounts.push((account_index, account.clone()));
+                true
+            } else {
+                false
+            };
 
             if !keep_account {
                 // accounts are stored during syncing, delete the empty accounts again

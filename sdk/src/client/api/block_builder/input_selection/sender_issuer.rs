@@ -252,8 +252,8 @@ fn get_required_addresses_for_sender_and_issuer(
             Output::Nft(nft_output) => nft_output.nft_id().is_null(),
             _ => false,
         };
-        if utxo_chain_creation {
-            if let Some(issuer_feature) = output.immutable_features().and_then(Features::issuer) {
+        if utxo_chain_creation
+            && let Some(issuer_feature) = output.immutable_features().and_then(Features::issuer) {
                 #[allow(clippy::set_contains_or_insert)]
                 if !required_sender_or_issuer_addresses.contains(issuer_feature.address()) {
                     // Only add if not already present in the selected inputs.
@@ -262,7 +262,6 @@ fn get_required_addresses_for_sender_and_issuer(
                     }
                 }
             }
-        }
     }
 
     Ok(required_sender_or_issuer_addresses)

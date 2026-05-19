@@ -63,8 +63,8 @@ pub(crate) fn migrate_from_chrysalis_data(
     let mut secret_manager_dto: Option<Value> = None;
 
     let account_indexation_key = to_chrysalis_key(b"iota-wallet-account-indexation", stronghold);
-    if let Some(account_indexation) = chrysalis_data.get(&account_indexation_key) {
-        if let Some(account_keys) = serde_json::from_str::<serde_json::Value>(account_indexation)?.as_array() {
+    if let Some(account_indexation) = chrysalis_data.get(&account_indexation_key)
+        && let Some(account_keys) = serde_json::from_str::<serde_json::Value>(account_indexation)?.as_array() {
             for account_key in account_keys {
                 let account_key = to_chrysalis_key(
                     account_key["key"].as_str().expect("key must be a string").as_bytes(),
@@ -143,7 +143,6 @@ pub(crate) fn migrate_from_chrysalis_data(
                 }
             }
         }
-    }
     // Accounts must be ordered by index
     new_accounts.sort_unstable_by_key(|a| a.index);
     Ok((new_accounts, secret_manager_dto))

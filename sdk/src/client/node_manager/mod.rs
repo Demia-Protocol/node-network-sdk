@@ -122,19 +122,16 @@ impl NodeManager {
             }
         }
 
-        if use_pow_nodes {
-            if let Some(pow_node) = &self.primary_pow_node {
-                if !nodes_with_modified_url.iter().any(|n| n.url == pow_node.url) {
+        if use_pow_nodes
+            && let Some(pow_node) = &self.primary_pow_node
+                && !nodes_with_modified_url.iter().any(|n| n.url == pow_node.url) {
                     nodes_with_modified_url.push(pow_node.clone());
                 }
-            }
-        }
 
-        if let Some(primary_node) = &self.primary_node {
-            if !nodes_with_modified_url.iter().any(|n| n.url == primary_node.url) {
+        if let Some(primary_node) = &self.primary_node
+            && !nodes_with_modified_url.iter().any(|n| n.url == primary_node.url) {
                 nodes_with_modified_url.push(primary_node.clone());
             }
-        }
 
         // Add other nodes in random order, so they are not always used in the same order
         let nodes_random_order = if !self.ignore_node_health {
@@ -195,8 +192,8 @@ impl NodeManager {
                 node.url.set_path(&format!("{}/{}", node.url.path(), path));
             }
             node.url.set_query(query);
-            if let Some(auth) = &node.auth {
-                if let Some((name, password)) = &auth.basic_auth_name_pwd {
+            if let Some(auth) = &node.auth
+                && let Some((name, password)) = &auth.basic_auth_name_pwd {
                     node.url
                         .set_username(name)
                         .map_err(|_| crate::client::Error::UrlAuth("username"))?;
@@ -204,7 +201,6 @@ impl NodeManager {
                         .set_password(Some(password))
                         .map_err(|_| crate::client::Error::UrlAuth("password"))?;
                 }
-            }
         }
 
         Ok(nodes_with_modified_url)
