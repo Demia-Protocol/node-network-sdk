@@ -19,7 +19,7 @@ use crypto::{
         secp256k1_ecdsa::{self, EvmAddress},
     },
 };
-use instant::Duration;
+use web_time::Duration;
 use iota_stronghold::{
     procedures::{self, Curve, KeyType, Slip10DeriveInput},
     Location,

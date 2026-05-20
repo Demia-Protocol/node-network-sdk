@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crypto::keys::bip44::Bip44;
-use instant::Instant;
+use web_time::Instant;
 
 use crate::{
     client::{secret::SecretManage, Client},

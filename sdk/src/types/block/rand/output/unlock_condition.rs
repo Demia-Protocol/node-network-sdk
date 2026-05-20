@@ -23,7 +23,8 @@ pub fn rand_state_controller_address_unlock_condition_different_from(
 ) -> StateControllerAddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Alias(mut alias_address) = &mut address {
+    if let Address::Alias(alias_address) = &mut address {
+        let mut alias_address = *alias_address;
         while alias_address.alias_id() == alias_id {
             alias_address = rand_alias_address();
         }
@@ -36,7 +37,8 @@ pub fn rand_state_controller_address_unlock_condition_different_from(
 pub fn rand_governor_address_unlock_condition_different_from(alias_id: &AliasId) -> GovernorAddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Alias(mut alias_address) = &mut address {
+    if let Address::Alias(alias_address) = &mut address {
+        let mut alias_address = *alias_address;
         while alias_address.alias_id() == alias_id {
             alias_address = rand_alias_address();
         }
@@ -49,7 +51,8 @@ pub fn rand_governor_address_unlock_condition_different_from(alias_id: &AliasId)
 pub fn rand_address_unlock_condition_different_from(nft_id: &NftId) -> AddressUnlockCondition {
     let mut address = rand_address();
 
-    if let Address::Nft(mut nft_address) = &mut address {
+    if let Address::Nft(nft_address) = &mut address {
+        let mut nft_address = *nft_address;
         while nft_address.nft_id() == nft_id {
             nft_address = rand_nft_address();
         }
