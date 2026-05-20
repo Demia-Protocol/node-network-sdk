@@ -1,7 +1,7 @@
 // Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use derivative::Derivative;
+use educe::Educe;
 #[cfg(feature = "mqtt")]
 use iota_sdk::client::mqtt::Topic;
 use iota_sdk::{
@@ -31,8 +31,8 @@ use serde::{Deserialize, Serialize};
 use crate::OmittedDebug;
 
 /// Each public client method.
-#[derive(Clone, Derivative, Serialize, Deserialize)]
-#[derivative(Debug)]
+#[derive(Clone, Educe, Serialize, Deserialize)]
+#[educe(Debug)]
 #[serde(tag = "name", content = "data", rename_all = "camelCase")]
 #[non_exhaustive]
 pub enum ClientMethod {
@@ -102,7 +102,7 @@ pub enum ClientMethod {
     #[serde(rename_all = "camelCase")]
     BuildAndPostBlock {
         /// Secret manager
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         secret_manager: Option<SecretManagerDto>,
         /// Options
         options: Option<BuildBlockOptions>,
@@ -141,7 +141,7 @@ pub enum ClientMethod {
     #[serde(rename_all = "camelCase")]
     PrepareTransaction {
         /// Secret manager
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         secret_manager: Option<SecretManagerDto>,
         /// Options
         options: Option<BuildBlockOptions>,
@@ -150,7 +150,7 @@ pub enum ClientMethod {
     #[serde(rename_all = "camelCase")]
     SignTransaction {
         /// Secret manager
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         secret_manager: SecretManagerDto,
         /// Prepared transaction data
         prepared_transaction_data: PreparedTransactionDataDto,
@@ -376,7 +376,7 @@ pub enum ClientMethod {
     #[serde(rename_all = "camelCase")]
     ConsolidateFunds {
         /// Secret manager
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         secret_manager: SecretManagerDto,
         /// Addresses generation options
         generate_addresses_options: GenerateAddressesOptions,

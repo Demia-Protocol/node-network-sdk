@@ -4,7 +4,7 @@
 #[cfg(feature = "stronghold")]
 use std::path::PathBuf;
 
-use derivative::Derivative;
+use educe::Educe;
 #[cfg(feature = "events")]
 use iota_sdk::wallet::events::types::{WalletEvent, WalletEventType};
 use iota_sdk::{
@@ -26,8 +26,8 @@ use crate::method::account::AccountMethod;
 use crate::OmittedDebug;
 
 /// The methods that can be sent to the actor.
-#[derive(Clone, Derivative, Serialize, Deserialize)]
-#[derivative(Debug)]
+#[derive(Clone, Educe, Serialize, Deserialize)]
+#[educe(Debug)]
 #[serde(tag = "name", content = "data", rename_all = "camelCase")]
 #[non_exhaustive]
 pub enum WalletMethod {
@@ -74,7 +74,7 @@ pub enum WalletMethod {
         /// The backup destination.
         destination: PathBuf,
         /// Stronghold file password.
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         password: String,
     },
     /// Change the Stronghold password to another one and also re-encrypt the values in the loaded snapshot with it.
@@ -83,9 +83,9 @@ pub enum WalletMethod {
     #[cfg_attr(docsrs, doc(cfg(feature = "stronghold")))]
     #[serde(rename_all = "camelCase")]
     ChangeStrongholdPassword {
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         current_password: String,
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         new_password: String,
     },
     /// Clears the Stronghold password from memory.
@@ -131,7 +131,7 @@ pub enum WalletMethod {
         /// The path to the backed up Stronghold.
         source: PathBuf,
         /// Stronghold file password.
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         password: String,
         /// If ignore_if_coin_type_mismatch.is_some(), client options will not be restored.
         /// If ignore_if_coin_type_mismatch == Some(true), client options coin type and accounts will not be restored
@@ -171,7 +171,7 @@ pub enum WalletMethod {
     #[cfg(feature = "stronghold")]
     #[cfg_attr(docsrs, doc(cfg(feature = "stronghold")))]
     SetStrongholdPassword {
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         password: String,
     },
     /// Set the stronghold password clear interval.
@@ -185,7 +185,7 @@ pub enum WalletMethod {
     #[cfg(feature = "stronghold")]
     #[cfg_attr(docsrs, doc(cfg(feature = "stronghold")))]
     StoreMnemonic {
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         mnemonic: String,
     },
     /// Start background syncing.

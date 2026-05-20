@@ -1,7 +1,7 @@
 // Copyright 2023 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use derivative::Derivative;
+use educe::Educe;
 use iota_sdk::{
     client::secret::types::InputSigningDataDto,
     types::block::{
@@ -24,8 +24,8 @@ use serde::{Deserialize, Serialize};
 use crate::OmittedDebug;
 
 /// Each public utils method.
-#[derive(Clone, Derivative, Serialize, Deserialize)]
-#[derivative(Debug)]
+#[derive(Clone, Educe, Serialize, Deserialize)]
+#[educe(Debug)]
 #[serde(tag = "name", content = "data", rename_all = "camelCase")]
 #[non_exhaustive]
 pub enum UtilsMethod {
@@ -81,7 +81,7 @@ pub enum UtilsMethod {
     /// Returns a hex encoded seed for a mnemonic.
     MnemonicToHexSeed {
         /// Mnemonic
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         mnemonic: String,
     },
     /// Returns a block ID (Blake2b256 hash of block bytes) from a block
@@ -142,7 +142,7 @@ pub enum UtilsMethod {
     /// Checks if the given mnemonic is valid.
     /// Expected response: [`Ok`](crate::Response::Ok)
     VerifyMnemonic {
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         mnemonic: String,
     },
     /// Verify an ed25519 signature against a message.
