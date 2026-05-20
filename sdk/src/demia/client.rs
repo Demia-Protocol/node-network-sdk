@@ -1,8 +1,11 @@
-use super::types::{TagId, TaggedResponse};
 use crate::{
-    client::{Client, Result},
-    types::{TryFromDto, block::Block},
+    client::{
+        Client, Result,
+    }, 
+    types::{block::Block, TryFromDto}
 };
+
+use super::types::{TagId, TaggedResponse};
 
 impl Client {
     /// Finds a list of blocks by their TagId. Returns a list of blocks containing the tagId.

@@ -11,8 +11,8 @@ mod wallet;
 use std::sync::Mutex;
 
 use iota_sdk_bindings_core::{
-    UtilsMethod, call_utils_method as rust_call_utils_method, init_logger as rust_init_logger,
-    iota_sdk::client::stronghold::StrongholdAdapter,
+    call_utils_method as rust_call_utils_method, init_logger as rust_init_logger,
+    iota_sdk::client::stronghold::StrongholdAdapter, UtilsMethod,
 };
 use once_cell::sync::OnceCell;
 use pyo3::{prelude::*, wrap_pyfunction};
@@ -69,7 +69,7 @@ pub fn migrate_stronghold_snapshot_v2_to_v3(
 
 /// IOTA SDK implemented in Rust for Python binding.
 #[pymodule]
-fn iota_sdk(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn iota_sdk(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(init_logger, m)?).unwrap();
 
     m.add_function(wrap_pyfunction!(call_utils_method, m)?).unwrap();

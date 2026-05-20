@@ -9,7 +9,7 @@ use std::collections::HashSet;
 
 #[cfg(not(target_family = "wasm"))]
 use futures::FutureExt;
-use web_time::Instant;
+use instant::Instant;
 
 use crate::{
     client::{node_api::indexer::QueryParameter, secret::SecretManage},
@@ -18,8 +18,8 @@ use crate::{
         output::OutputId,
     },
     wallet::account::{
-        Account, constants::PARALLEL_REQUESTS_AMOUNT, operations::syncing::SyncOptions,
-        types::address::AddressWithUnspentOutputs,
+        constants::PARALLEL_REQUESTS_AMOUNT, operations::syncing::SyncOptions,
+        types::address::AddressWithUnspentOutputs, Account,
     },
 };
 

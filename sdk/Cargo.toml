@@ -1,6 +1,6 @@
 [package]
 name = "iota-sdk"
-version = "1.1.6"
+version = "1.1.5"
 authors = ["IOTA Stiftung"]
 edition = "2024"
 description = "The IOTA SDK provides developers with a seamless experience to develop on IOTA by providing account abstractions and clients to interact with node APIs."
@@ -34,7 +34,7 @@ hashbrown = { version = "0.14.3", default-features = false, features = [
     "inline-more",
 ] }
 hex = { version = "0.4.3", default-features = false }
-iota-crypto = { version = "0.23.2", default-features = false, features = [
+iota-crypto = { version = "0.23.1", default-features = false, features = [
     "blake2b",
     "ed25519",
     "secp256k1",
@@ -101,7 +101,7 @@ zeroize = { version = "1.7.0", default-features = false, features = [
 ], optional = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-tokio = { version = "1.44.2", default-features = false, features = [
+tokio = { version = "1.36.0", default-features = false, features = [
     "macros",
     "rt-multi-thread",
     "time",
@@ -115,7 +115,7 @@ gloo-timers = { version = "0.3.0", default-features = false, features = [
 ] }
 web-time = { version = "1.1", default-features = false, optional = true }
 lazy_static = { version = "1.4.0", default-features = false }
-tokio = { version = "1.44.2", default-features = false, features = [
+tokio = { version = "1.36.0", default-features = false, features = [
     "macros",
     "rt",
     "time",
@@ -131,7 +131,7 @@ pretty_assertions = { version = "1.4.0", default-features = false, features = [
 
 dotenvy = { version = "0.15.7", default-features = false }
 fern-logger = { version = "0.5.0", default-features = false }
-tokio = { version = "1.44.2", default-features = false, features = [
+tokio = { version = "1.36.0", default-features = false, features = [
     "macros",
     "rt",
     "rt-multi-thread",
@@ -181,7 +181,6 @@ storage = [
 ]
 stronghold = [
     "iota_stronghold",
-    "iota_stronghold?/insecure",
     "iota-crypto/chacha",
     "dep:time",
     "dep:anymap2",

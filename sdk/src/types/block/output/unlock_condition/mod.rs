@@ -15,12 +15,12 @@ use bitflags::bitflags;
 use derive_more::{Deref, From};
 use iterator_sorted::is_unique_sorted;
 use packable::{
-    Packable,
     bounded::BoundedU8,
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
     prefix::BoxedSlicePrefix,
     unpacker::Unpacker,
+    Packable,
 };
 
 pub use self::{
@@ -29,7 +29,7 @@ pub use self::{
     state_controller_address::StateControllerAddressUnlockCondition,
     storage_deposit_return::StorageDepositReturnUnlockCondition, timelock::TimelockUnlockCondition,
 };
-use crate::types::block::{Error, address::Address, protocol::ProtocolParameters};
+use crate::types::block::{address::Address, protocol::ProtocolParameters, Error};
 
 ///
 #[derive(Clone, Eq, PartialEq, Hash, From)]
@@ -428,14 +428,14 @@ impl UnlockConditions {
     #[inline(always)]
     pub fn is_time_locked(&self, milestone_timestamp: u32) -> bool {
         self.timelock()
-            .is_some_and(|timelock| milestone_timestamp < timelock.timestamp())
+            .map_or(false, |timelock| milestone_timestamp < timelock.timestamp())
     }
 
     /// Returns whether an expiration exists and is expired.
     #[inline(always)]
     pub fn is_expired(&self, milestone_timestamp: u32) -> bool {
         self.expiration()
-            .is_some_and(|expiration| milestone_timestamp >= expiration.timestamp())
+            .map_or(false, |expiration| milestone_timestamp >= expiration.timestamp())
     }
 }
 
@@ -510,7 +510,7 @@ pub mod dto {
         storage_deposit_return::dto::StorageDepositReturnUnlockConditionDto, timelock::dto::TimelockUnlockConditionDto,
     };
     use super::*;
-    use crate::types::{TryFromDto, ValidationParams, block::Error};
+    use crate::types::{block::Error, TryFromDto, ValidationParams};
 
     #[derive(Clone, Debug, Eq, PartialEq, super::From)]
     pub enum UnlockConditionDto {

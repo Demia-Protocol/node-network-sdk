@@ -2,23 +2,23 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crypto::keys::bip44::Bip44;
-use web_time::Instant;
+use instant::Instant;
 
 use crate::{
-    client::{Client, secret::SecretManage},
+    client::{secret::SecretManage, Client},
     types::{
         api::core::response::OutputWithMetadataResponse,
         block::{
             input::Input,
             output::{OutputId, OutputWithMetadata},
             payload::{
-                Payload, TransactionPayload,
                 transaction::{TransactionEssence, TransactionId},
+                Payload, TransactionPayload,
             },
         },
     },
     wallet::{
-        account::{Account, AddressWithUnspentOutputs, build_transaction_from_payload_and_inputs, types::OutputData},
+        account::{build_transaction_from_payload_and_inputs, types::OutputData, Account, AddressWithUnspentOutputs},
         task,
     },
 };
@@ -46,7 +46,7 @@ where
                 let remainder = account_details
                     .transactions
                     .get(output_with_meta.metadata().transaction_id())
-                    .is_some_and(|tx| !tx.incoming);
+                    .map_or(false, |tx| !tx.incoming);
 
                 // BIP 44 (HD wallets) and 4218 is the registered index for IOTA https://github.com/satoshilabs/slips/blob/master/slip-0044.md
                 let chain = Bip44::new(account_details.coin_type)

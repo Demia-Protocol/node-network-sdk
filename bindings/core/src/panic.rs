@@ -3,13 +3,13 @@
 
 use std::{
     any::Any,
-    panic::{AssertUnwindSafe, catch_unwind},
+    panic::{catch_unwind, AssertUnwindSafe},
 };
 
 use backtrace::Backtrace;
 use futures::{Future, FutureExt};
 
-use crate::{Result, response::Response};
+use crate::{response::Response, Result};
 
 fn panic_to_response_message(panic: Box<dyn Any>) -> Response {
     let msg = panic.downcast_ref::<String>().map_or_else(
@@ -49,7 +49,6 @@ where
         .unwrap_or_else(|panic| Ok(panic_to_response_message(panic)))
 }
 
-#[allow(clippy::result_large_err)]
 pub(crate) fn convert_panics<F: FnOnce() -> Result<Response>>(f: F) -> Result<Response> {
     match catch_unwind(AssertUnwindSafe(f)) {
         Ok(result) => result,
@@ -59,7 +58,7 @@ pub(crate) fn convert_panics<F: FnOnce() -> Result<Response>>(f: F) -> Result<Re
 
 #[cfg(test)]
 mod tests {
-    use super::super::{Response, panic::convert_async_panics};
+    use super::super::{panic::convert_async_panics, Response};
 
     #[tokio::test]
     async fn panic_to_response() {

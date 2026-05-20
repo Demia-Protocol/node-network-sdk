@@ -1,8 +1,8 @@
 [package]
 name = "iota-sdk-python"
-version = "1.1.5"
+version = "1.1.4"
 authors = ["IOTA Stiftung"]
-edition = "2024"
+edition = "2021"
 description = "Python bindings for the IOTA SDK library"
 documentation = "https://wiki.iota.org/iota-sdk/welcome"
 homepage = "https://www.iota.org/"
@@ -29,9 +29,9 @@ iota-sdk-bindings-core = { path = "../core", default-features = false, features 
 
 futures = { version = "0.3.30", default-features = false }
 once_cell = { version = "1.19.0", default-features = false }
-pyo3 = { version = "0.24.2", default-features = false, features = [
+pyo3 = { version = "0.20.2", default-features = false, features = [
     "macros",
     "extension-module",
 ] }
 serde_json = { version = "1.0.113", default-features = false }
-tokio = { version = "1.44.2", default-features = false }
+tokio = { version = "1.36.0", default-features = false }

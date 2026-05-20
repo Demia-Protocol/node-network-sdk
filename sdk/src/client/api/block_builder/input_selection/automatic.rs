@@ -10,20 +10,20 @@ use itertools::Itertools;
 
 use crate::{
     client::{
-        Error, Result,
         api::{
-            ADDRESS_GAP_RANGE, ClientBlockBuilder, GetAddressesOptions,
             block_builder::input_selection::core::{Error as InputSelectionError, InputSelection, Selected},
             input_selection::is_alias_transition,
+            ClientBlockBuilder, GetAddressesOptions, ADDRESS_GAP_RANGE,
         },
         node_api::indexer::query_parameters::QueryParameter,
         secret::types::InputSigningData,
+        Error, Result,
     },
-    types::block::{ConvertTo, address::Bech32Address, output::OutputWithMetadata, protocol::ProtocolParameters},
+    types::block::{address::Bech32Address, output::OutputWithMetadata, protocol::ProtocolParameters, ConvertTo},
     utils::unix_timestamp_now,
 };
 
-impl ClientBlockBuilder<'_> {
+impl<'a> ClientBlockBuilder<'a> {
     // Get basic outputs for an address without storage deposit return unlock condition
     pub(crate) async fn basic_address_outputs(
         &self,
@@ -213,7 +213,7 @@ impl ClientBlockBuilder<'_> {
                             cached_error.replace(Error::from(err));
                             continue;
                         }
-                        Err(err @ InputSelectionError::NoAvailableInputsProvided) => {
+                        Err(err @ InputSelectionError::NoAvailableInputsProvided { .. }) => {
                             cached_error.replace(Error::from(err));
                             continue;
                         }

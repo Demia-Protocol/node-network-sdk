@@ -13,17 +13,18 @@ use crypto::{
     signatures::secp256k1_ecdsa::{self, EvmAddress},
 };
 use iota_ledger_nano::{
-    LedgerBIP32Index, Packable as LedgerNanoPackable, TransportTypes, api::errors::APIError, get_app_config,
-    get_buffer_size, get_ledger, get_opened_app,
+    api::errors::APIError, get_app_config, get_buffer_size, get_ledger, get_opened_app, LedgerBIP32Index,
+    Packable as LedgerNanoPackable, TransportTypes,
 };
-use packable::{Packable, PackableExt, error::UnexpectedEOF, unpacker::SliceUnpacker};
+use packable::{error::UnexpectedEOF, unpacker::SliceUnpacker, Packable, PackableExt};
 use tokio::sync::Mutex;
 
 use super::{GenerateAddressOptions, SecretManage, SecretManagerConfig};
 use crate::{
     client::secret::{
-        LedgerNanoStatus, PreparedTransactionData, is_alias_transition,
+        is_alias_transition,
         types::{LedgerApp, LedgerDeviceType},
+        LedgerNanoStatus, PreparedTransactionData,
     },
     types::block::{
         address::{Address, AliasAddress, Ed25519Address, NftAddress},
@@ -418,9 +419,7 @@ impl SecretManagerConfig for LedgerSecretManager {
     }
 }
 
-/// Checks if blind signing is needed for a transaction.
-///
-/// The Ledger Nano S(+)/X app can present the user a detailed view of the transaction before it
+/// the Ledger Nano S(+)/X app can present the user a detailed view of the transaction before it
 /// is signed but only with BasicOutputs, without extra-features and if the Essence is not too large.
 /// If criteria are not met, blind signing is needed.
 /// This method finds out if we have to switch to blind signing mode.

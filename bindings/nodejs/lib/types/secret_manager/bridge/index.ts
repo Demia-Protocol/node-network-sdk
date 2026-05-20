@@ -4,7 +4,6 @@ import type {
     __GetLedgerNanoStatusMethod__,
     __SignTransactionMethod__,
     __StoreMnemonicMethod__,
-    __GetSeedMethod__,
     __SignatureUnlockMethod__,
     __SignEd25519Method__,
     __SignSecp256k1EcdsaMethod__,
@@ -17,6 +16,5 @@ export type __SecretManagerMethods__ =
     | __SignTransactionMethod__
     | __SignatureUnlockMethod__
     | __StoreMnemonicMethod__
-    | __GetSeedMethod__
     | __SignEd25519Method__
     | __SignSecp256k1EcdsaMethod__;

@@ -3,8 +3,8 @@
 
 use std::collections::HashSet;
 
+use instant::Instant;
 use packable::bounded::TryIntoBoundedU16Error;
-use web_time::Instant;
 
 #[cfg(feature = "events")]
 use crate::wallet::events::types::{AddressData, TransactionProgressEvent, WalletEvent};
@@ -12,11 +12,11 @@ use crate::{
     client::{api::PreparedTransactionData, secret::SecretManage},
     types::block::{
         input::INPUT_COUNT_RANGE,
-        output::{OUTPUT_COUNT_RANGE, Output},
+        output::{Output, OUTPUT_COUNT_RANGE},
     },
     wallet::account::{
-        Account,
         operations::transaction::{RemainderValueStrategy, TransactionOptions},
+        Account,
     },
 };
 

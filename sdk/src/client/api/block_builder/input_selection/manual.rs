@@ -9,19 +9,19 @@ use crypto::keys::bip44::Bip44;
 
 use crate::{
     client::{
-        Result,
         api::{
-            ClientBlockBuilder,
             address::search_address,
             block_builder::input_selection::{Burn, InputSelection, Selected},
             input_selection::is_alias_transition,
+            ClientBlockBuilder,
         },
         secret::types::InputSigningData,
+        Result,
     },
     types::block::{address::Address, protocol::ProtocolParameters},
 };
 
-impl ClientBlockBuilder<'_> {
+impl<'a> ClientBlockBuilder<'a> {
     /// If custom inputs are provided we check if they are unspent, get the balance and search the Ed25519 addresses for
     /// them with the provided input_range so we can later sign them.
     /// Forwards to input selection with all inputs in `mandatory_inputs`, so they will all be included in the

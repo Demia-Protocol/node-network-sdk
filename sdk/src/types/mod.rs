@@ -21,7 +21,7 @@ pub enum Boo<'a, T> {
     Owned(T),
 }
 
-impl<T> Boo<'_, T> {
+impl<'a, T> Boo<'a, T> {
     pub fn into_owned(self) -> T
     where
         T: Clone,
@@ -33,13 +33,13 @@ impl<T> Boo<'_, T> {
     }
 }
 
-impl<T> AsRef<T> for Boo<'_, T> {
+impl<'a, T> AsRef<T> for Boo<'a, T> {
     fn as_ref(&self) -> &T {
         self.deref()
     }
 }
 
-impl<T> Deref for Boo<'_, T> {
+impl<'a, T> Deref for Boo<'a, T> {
     type Target = T;
 
     fn deref(&self) -> &Self::Target {
@@ -50,7 +50,7 @@ impl<T> Deref for Boo<'_, T> {
     }
 }
 
-impl<T> From<T> for Boo<'_, T> {
+impl<'a, T> From<T> for Boo<'a, T> {
     fn from(value: T) -> Self {
         Self::Owned(value)
     }
@@ -62,8 +62,8 @@ impl<'a, T> From<&'a T> for Boo<'a, T> {
     }
 }
 
-impl<'a, T> From<&'a Self> for Boo<'a, T> {
-    fn from(value: &'a Self) -> Self {
+impl<'a, T> From<&'a Boo<'a, T>> for Boo<'a, T> {
+    fn from(value: &'a Boo<'a, T>) -> Self {
         match *value {
             Self::Borrowed(b) => Self::Borrowed(b),
             Self::Owned(ref o) => Self::Borrowed(o),
@@ -100,13 +100,13 @@ impl<'a> ValidationParams<'a> {
     }
 }
 
-impl From<u64> for ValidationParams<'_> {
+impl<'a> From<u64> for ValidationParams<'a> {
     fn from(value: u64) -> Self {
         Self::default().with_token_supply(value)
     }
 }
 
-impl From<ProtocolParameters> for ValidationParams<'_> {
+impl<'a> From<ProtocolParameters> for ValidationParams<'a> {
     fn from(value: ProtocolParameters) -> Self {
         Self::default().with_protocol_parameters(value)
     }
@@ -118,8 +118,8 @@ impl<'a> From<&'a ProtocolParameters> for ValidationParams<'a> {
     }
 }
 
-impl<'a> From<&'a Self> for ValidationParams<'a> {
-    fn from(value: &'a Self) -> Self {
+impl<'a> From<&'a ValidationParams<'a>> for ValidationParams<'a> {
+    fn from(value: &'a ValidationParams<'a>) -> Self {
         Self {
             protocol_parameters: value.protocol_parameters.as_ref().map(Into::into),
             token_supply: value.token_supply,

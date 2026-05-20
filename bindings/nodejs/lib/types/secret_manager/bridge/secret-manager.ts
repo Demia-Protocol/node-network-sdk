@@ -42,10 +42,6 @@ export interface __StoreMnemonicMethod__ {
     };
 }
 
-export interface __GetSeedMethod__ {
-    name: 'getSeed';
-}
-
 export interface __SignEd25519Method__ {
     name: 'signEd25519';
     data: {

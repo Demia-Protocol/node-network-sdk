@@ -12,9 +12,9 @@
 //! ```
 
 use iota_sdk::{
-    Wallet,
     types::block::address::Bech32Address,
     wallet::{Result, SendNativeTokensParams},
+    Wallet,
 };
 use primitive_types::U256;
 
@@ -33,7 +33,7 @@ async fn main() -> Result<()> {
     }
 
     let wallet = Wallet::builder()
-        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
         .finish()
         .await?;
     let account = wallet.get_account("Alice").await?;

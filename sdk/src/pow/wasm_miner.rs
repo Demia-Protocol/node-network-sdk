@@ -4,18 +4,18 @@
 //! Single-threaded PoW miner.
 
 use crypto::{
-    encoding::ternary::{T1B1Buf, TritBuf, b1t6},
+    encoding::ternary::{b1t6, T1B1Buf, TritBuf},
     hashes::{
-        Digest,
         blake2b::Blake2b256,
         ternary::{
+            curl_p::{CurlPBatchHasher, BATCH_SIZE},
             HASH_LENGTH,
-            curl_p::{BATCH_SIZE, CurlPBatchHasher},
         },
+        Digest,
     },
 };
 
-use super::{LN_3, score::count_trailing_zeros};
+use super::{score::count_trailing_zeros, LN_3};
 
 // Should take around one second to reach on an average CPU, so shouldn't cause a noticeable delay on
 // `timeout_in_seconds`.
@@ -46,14 +46,14 @@ impl SingleThreadedMinerBuilder {
         SingleThreadedMiner {
             timeout_in_seconds: self
                 .timeout_in_seconds
-                .map(|timeout| web_time::Duration::from_secs(timeout)),
+                .map(|timeout| instant::Duration::from_secs(timeout)),
         }
     }
 }
 
 /// Single-threaded proof-of-work for Wasm.
 pub struct SingleThreadedMiner {
-    timeout_in_seconds: Option<web_time::Duration>,
+    timeout_in_seconds: Option<instant::Duration>,
 }
 
 impl SingleThreadedMiner {
@@ -80,7 +80,7 @@ impl SingleThreadedMiner {
 
         // Counter to reduce number of mining_start.elapsed() calls.
         let mut counter = 0;
-        let mining_start = web_time::Instant::now();
+        let mining_start = instant::Instant::now();
 
         loop {
             if let Some(timeout) = self.timeout_in_seconds {

@@ -14,10 +14,10 @@
 use iota_sdk::{
     client::{
         constants::SHIMMER_COIN_TYPE,
-        secret::{SecretManager, mnemonic::MnemonicSecretManager},
+        secret::{mnemonic::MnemonicSecretManager, SecretManager},
     },
-    types::block::output::{BasicOutputBuilder, unlock_condition::AddressUnlockCondition},
-    wallet::{Account, ClientOptions, Result, Wallet, account::types::AccountAddress},
+    types::block::output::{unlock_condition::AddressUnlockCondition, BasicOutputBuilder},
+    wallet::{account::types::AccountAddress, Account, ClientOptions, Result, Wallet},
 };
 
 // The base coin amount to send
@@ -40,7 +40,7 @@ async fn main() -> Result<()> {
 
     let wallet = Wallet::builder()
         .with_secret_manager(SecretManager::Mnemonic(secret_manager))
-        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
         .with_client_options(client_options)
         .with_coin_type(SHIMMER_COIN_TYPE)
         .finish()

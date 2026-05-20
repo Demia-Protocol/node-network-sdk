@@ -9,23 +9,23 @@ use crypto::keys::bip44::Bip44;
 
 use crate::{
     client::{
-        Error, Result,
         api::{
-            ClientBlockBuilder,
             address::search_address,
             block_builder::input_selection::core::{
                 error::Error as InputSelectionError, requirement::alias::is_alias_transition,
             },
+            ClientBlockBuilder,
         },
         secret::types::InputSigningData,
+        Error, Result,
     },
     types::block::{
         address::{Address, ToBech32Ext},
-        output::{Output, feature::Features},
+        output::{feature::Features, Output},
     },
 };
 
-impl ClientBlockBuilder<'_> {
+impl<'a> ClientBlockBuilder<'a> {
     pub(crate) async fn get_inputs_for_sender_and_issuer(
         &self,
         utxo_chain_inputs: &[InputSigningData],
@@ -237,7 +237,6 @@ fn get_required_addresses_for_sender_and_issuer(
 
     for output in outputs {
         if let Some(sender_feature) = output.features().and_then(Features::sender) {
-            #[allow(clippy::set_contains_or_insert)]
             if !required_sender_or_issuer_addresses.contains(sender_feature.address()) {
                 // Only add if not already present in the selected inputs.
                 if !unlocked_addresses.contains(sender_feature.address()) {

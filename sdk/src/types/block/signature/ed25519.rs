@@ -4,17 +4,17 @@
 use core::{fmt, ops::Deref};
 
 use crypto::{
-    hashes::{Digest, blake2b::Blake2b256},
+    hashes::{blake2b::Blake2b256, Digest},
     signatures::ed25519::{PublicKey, PublicKeyBytes, Signature},
 };
 use packable::{
-    Packable,
     error::{UnpackError, UnpackErrorExt},
     packer::Packer,
     unpacker::Unpacker,
+    Packable,
 };
 
-use crate::types::block::{Error, address::Ed25519Address};
+use crate::types::block::{address::Ed25519Address, Error};
 
 /// An Ed25519 signature.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -112,7 +112,7 @@ impl fmt::Debug for Ed25519Signature {
         #[repr(transparent)]
         struct UnquotedStr<'a>(&'a str);
 
-        impl fmt::Debug for UnquotedStr<'_> {
+        impl<'a> fmt::Debug for UnquotedStr<'a> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 write!(f, "{}", self.0)
             }

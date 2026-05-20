@@ -11,7 +11,7 @@
 //! cargo run --release --all-features --example state_transition
 //! ```
 
-use iota_sdk::{Wallet, types::block::output::AliasOutputBuilder, wallet::Result};
+use iota_sdk::{types::block::output::AliasOutputBuilder, wallet::Result, Wallet};
 
 // The metadata for the next state
 const NEW_STATE_METADATA: &str = "updated state metadata 1";
@@ -26,7 +26,7 @@ async fn main() -> Result<()> {
     }
 
     let wallet = Wallet::builder()
-        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
         .finish()
         .await?;
     let account = wallet.get_account("Alice").await?;

@@ -6,17 +6,17 @@ use primitive_types::U256;
 use crate::{
     client::secret::SecretManage,
     types::block::{
-        ConvertTo,
         address::Bech32Address,
-        output::{FoundryId, NativeTokensBuilder, Output, Rent, unlock_condition::UnlockCondition},
+        output::{unlock_condition::UnlockCondition, FoundryId, NativeTokensBuilder, Output, Rent},
+        ConvertTo,
     },
     wallet::{
-        Error, Result,
         account::{
-            Account, AccountDetails, OutputsToClaim,
             operations::helpers::time::can_output_be_unlocked_forever_from_now_on,
             types::{AddressWithUnspentOutputs, Balance, NativeTokensBalance},
+            Account, AccountDetails, OutputsToClaim,
         },
+        Error, Result,
     },
 };
 
@@ -337,7 +337,6 @@ where
             balance.native_tokens.push(NativeTokensBalance {
                 token_id: *native_token.token_id(),
                 total: native_token.amount(),
-                #[allow(clippy::or_fun_call)]
                 available: native_token.amount() - *locked_native_token_amount.unwrap_or(&U256::from(0u8)),
                 metadata,
             })

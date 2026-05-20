@@ -17,9 +17,9 @@
 //! ```
 
 use iota_sdk::{
-    Url, Wallet,
     client::node_manager::node::Node,
-    wallet::{Result, account::types::participation::ParticipationEventRegistrationOptions},
+    wallet::{account::types::participation::ParticipationEventRegistrationOptions, Result},
+    Url, Wallet,
 };
 
 // The node that runs the participation plugin
@@ -46,7 +46,7 @@ async fn main() -> Result<()> {
     }
 
     let wallet = Wallet::builder()
-        .with_storage_path(std::env::var("WALLET_DB_PATH").unwrap())
+        .with_storage_path(&std::env::var("WALLET_DB_PATH").unwrap())
         .finish()
         .await?;
     let account = wallet.get_account("Alice").await?;

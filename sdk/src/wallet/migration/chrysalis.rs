@@ -18,7 +18,7 @@ use serde_json::Value;
 use zeroize::Zeroizing;
 
 use crate::{
-    client::{Password, constants::IOTA_COIN_TYPE},
+    client::{constants::IOTA_COIN_TYPE, Password},
     types::block::address::Bech32Address,
     wallet::{Error, Result},
 };
@@ -209,18 +209,18 @@ pub(crate) fn to_chrysalis_key(key: &[u8], stronghold: bool) -> Vec<u8> {
 #[cfg(not(target_family = "wasm"))]
 #[cfg(feature = "rocksdb")]
 pub(crate) mod rocksdb {
-    use ::rocksdb::{DB, IteratorMode};
+    use ::rocksdb::{IteratorMode, DB};
 
     use super::*;
     use crate::{
         client::storage::StorageAdapter,
         wallet::{
-            migration::{MIGRATION_VERSION_KEY, MigrationData},
+            migration::{MigrationData, MIGRATION_VERSION_KEY},
             storage::{
-                StorageManager,
                 constants::{
-                    ACCOUNT_INDEXATION_KEY, ACCOUNTS_INDEXATION_KEY, SECRET_MANAGER_KEY, WALLET_INDEXATION_KEY,
+                    ACCOUNTS_INDEXATION_KEY, ACCOUNT_INDEXATION_KEY, SECRET_MANAGER_KEY, WALLET_INDEXATION_KEY,
                 },
+                StorageManager,
             },
         },
     };
@@ -334,7 +334,7 @@ pub(crate) mod rocksdb {
 
             chrysalis_data.insert(key.to_vec(), value);
         }
-        if !chrysalis_data.contains_key(b"iota-wallet-account-indexation".as_slice()) {
+        if !chrysalis_data.contains_key(&b"iota-wallet-account-indexation".to_vec()) {
             return Err(crate::wallet::Error::Migration(
                 "no chrysalis data to migrate".to_string(),
             ));

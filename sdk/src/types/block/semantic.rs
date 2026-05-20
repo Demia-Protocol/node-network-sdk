@@ -8,11 +8,11 @@ use hashbrown::{HashMap, HashSet};
 use primitive_types::U256;
 
 use crate::types::block::{
-    Error,
     address::Address,
     output::{ChainId, FoundryId, InputsCommitment, NativeTokens, Output, OutputId, TokenId},
     payload::transaction::{RegularTransactionEssence, TransactionEssence, TransactionId},
     unlock::Unlocks,
+    Error,
 };
 
 /// Errors related to ledger types.
@@ -349,7 +349,7 @@ pub fn semantic_validation(
     let mut native_token_ids = HashSet::new();
 
     // Validation of input native tokens.
-    for token_id in context.input_native_tokens.keys() {
+    for (token_id, _input_amount) in context.input_native_tokens.iter() {
         native_token_ids.insert(token_id);
     }
 

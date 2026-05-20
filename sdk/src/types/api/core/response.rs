@@ -6,10 +6,10 @@ use alloc::{string::String, vec::Vec};
 use serde::{Deserialize, Serialize};
 
 use crate::types::block::{
-    BlockId,
-    output::{OutputId, OutputMetadata, OutputWithMetadata, dto::OutputDto},
-    payload::milestone::{MilestoneId, option::dto::ReceiptMilestoneOptionDto},
+    output::{dto::OutputDto, OutputId, OutputMetadata, OutputWithMetadata},
+    payload::milestone::{option::dto::ReceiptMilestoneOptionDto, MilestoneId},
     protocol::ProtocolParameters,
+    BlockId,
 };
 
 /// Response of GET /api/core/v2/info.
@@ -260,7 +260,6 @@ pub enum Relation {
 /// Response of
 /// - GET /api/core/v2/peer/{peer_id}
 /// - POST /api/core/v2/peers
-///
 /// Returns information about a peer.
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

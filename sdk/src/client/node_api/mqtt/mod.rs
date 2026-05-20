@@ -11,15 +11,15 @@ use std::{sync::Arc, time::Instant};
 use crypto::utils;
 use log::warn;
 use packable::PackableExt;
-use rumqttc::{AsyncClient, Broker, Event, EventLoop, Filter, Incoming, MqttOptions, NetworkOptions, QoS, Transport};
+use rumqttc::{AsyncClient, Broker, Event, EventLoop, Incoming, MqttOptions, NetworkOptions, QoS, Filter, Transport};
 use tokio::sync::watch::Receiver as WatchReceiver;
 
 pub use self::{error::Error, types::*};
 use crate::{
     client::{Client, ClientInner},
     types::block::{
+        payload::{milestone::ReceiptMilestoneOption, Payload},
         Block,
-        payload::{Payload, milestone::ReceiptMilestoneOption},
     },
 };
 
