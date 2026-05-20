@@ -42,16 +42,27 @@ pub fn call_client_method(client: &Client, method: String) -> Result<String> {
 
 #[pyfunction]
 pub fn listen_mqtt(client: &Client, topics: Vec<String>, handler: PyObject) -> Result<()> {
+    let handler = std::sync::Arc::new(handler);
     let topics = topics
         .iter()
         .map(Topic::new)
         .collect::<std::result::Result<Vec<Topic>, MqttError>>()?;
     crate::block_on(async {
         rust_listen_mqtt(&client.client, topics, move |event| {
-            let event_string = serde_json::to_string(&event).expect("json to string error");
-            Python::with_gil(|py| {
-                let args = PyTuple::new(py, &[event_string]);
-                handler.call1(py, args).expect("failed to call python callback");
+            let event_string = match serde_json::to_string(&event) {
+                Ok(s) => s,
+                Err(e) => {
+                    log::error!("failed to serialize MQTT event: {e}");
+                    return;
+                }
+            };
+            Python::with_gil(|py| match PyTuple::new(py, &[event_string]) {
+                Ok(args) => {
+                    if let Err(e) = handler.call1(py, args) {
+                        log::error!("python MQTT callback failed: {e}");
+                    }
+                }
+                Err(e) => log::error!("failed to convert event into PyTuple: {e}"),
             })
         })
         .await
