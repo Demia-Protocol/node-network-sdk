@@ -63,84 +63,84 @@ pub(crate) fn migrate_from_chrysalis_data(
     let mut secret_manager_dto: Option<Value> = None;
 
     let account_indexation_key = to_chrysalis_key(b"iota-wallet-account-indexation", stronghold);
-    if let Some(account_indexation) = chrysalis_data.get(&account_indexation_key) {
-        if let Some(account_keys) = serde_json::from_str::<serde_json::Value>(account_indexation)?.as_array() {
-            for account_key in account_keys {
-                let account_key = to_chrysalis_key(
-                    account_key["key"].as_str().expect("key must be a string").as_bytes(),
-                    stronghold,
-                );
+    if let Some(account_indexation) = chrysalis_data.get(&account_indexation_key)
+        && let Some(account_keys) = serde_json::from_str::<serde_json::Value>(account_indexation)?.as_array()
+    {
+        for account_key in account_keys {
+            let account_key = to_chrysalis_key(
+                account_key["key"].as_str().expect("key must be a string").as_bytes(),
+                stronghold,
+            );
 
-                if let Some(account_data) = chrysalis_data.get(&account_key) {
-                    let account_data = serde_json::from_str::<serde_json::Value>(account_data)?;
-                    if secret_manager_dto.is_none() {
-                        let dto = match &account_data["signerType"]["type"].as_str() {
-                            Some("Stronghold") => serde_json::json!({"Stronghold": {"password": null, "timeout": null,
-                                "snapshotPath": format!("{}/wallet.stronghold", storage_path.to_string_lossy())
-                            }
-                                }),
-                            Some("LedgerNano") => serde_json::json!({"LedgerNano": false }),
-                            Some("LedgerNanoSimulator") => serde_json::json!({"LedgerNano": true }),
-                            _ => return Err(Error::Migration("Missing signerType".into())),
-                        };
-                        secret_manager_dto = Some(dto);
-                    }
-
-                    let mut account_addresses = Vec::new();
-
-                    // Migrate addresses, skips all above potential gaps (for example: index 0, 1, 3 -> 0, 1), public
-                    // and internal addresses on their own
-                    if let Some(addresses) = account_data["addresses"].as_array() {
-                        let mut highest_public_address_index = 0;
-                        let mut highest_internal_address_index = 0;
-                        for address in addresses {
-                            let internal = address["internal"].as_bool().unwrap();
-                            let key_index = address["keyIndex"].as_u64().unwrap() as u32;
-                            let bech32_address = Bech32Address::from_str(address["address"].as_str().unwrap())?;
-                            if internal {
-                                if key_index != highest_internal_address_index {
-                                    log::warn!(
-                                        "Skip migrating internal address because of gap: {bech32_address}, index {key_index}"
-                                    );
-                                    continue;
-                                }
-                                highest_internal_address_index += 1;
-                            } else {
-                                if key_index != highest_public_address_index {
-                                    log::warn!(
-                                        "Skip migrating public address because of gap: {bech32_address}, index {key_index}"
-                                    );
-                                    continue;
-                                }
-                                highest_public_address_index += 1;
-                            }
-                            account_addresses.push(AccountAddress {
-                                address: bech32_address,
-                                key_index,
-                                internal,
-                                used: !address["outputs"].as_object().unwrap().is_empty(),
-                            })
+            if let Some(account_data) = chrysalis_data.get(&account_key) {
+                let account_data = serde_json::from_str::<serde_json::Value>(account_data)?;
+                if secret_manager_dto.is_none() {
+                    let dto = match &account_data["signerType"]["type"].as_str() {
+                        Some("Stronghold") => serde_json::json!({"Stronghold": {"password": null, "timeout": null,
+                            "snapshotPath": format!("{}/wallet.stronghold", storage_path.to_string_lossy())
                         }
-                    }
-                    let (internal, public): (Vec<AccountAddress>, Vec<AccountAddress>) =
-                        account_addresses.into_iter().partition(|a| a.internal);
-
-                    new_accounts.push(AccountDetailsDto {
-                        index: account_data["index"].as_u64().unwrap() as u32,
-                        coin_type: IOTA_COIN_TYPE,
-                        alias: account_data["alias"].as_str().unwrap().to_string(),
-                        public_addresses: public,
-                        internal_addresses: internal,
-                        addresses_with_unspent_outputs: Vec::new(),
-                        outputs: HashMap::new(),
-                        unspent_outputs: HashMap::new(),
-                        transactions: HashMap::new(),
-                        pending_transactions: HashSet::new(),
-                        locked_outputs: HashSet::new(),
-                        incoming_transactions: HashMap::new(),
-                        native_token_foundries: HashMap::new(),
-                    })
+                            }),
+                        Some("LedgerNano") => serde_json::json!({"LedgerNano": false }),
+                        Some("LedgerNanoSimulator") => serde_json::json!({"LedgerNano": true }),
+                        _ => return Err(Error::Migration("Missing signerType".into())),
+                    };
+                    secret_manager_dto = Some(dto);
                 }
+
+                let mut account_addresses = Vec::new();
+
+                // Migrate addresses, skips all above potential gaps (for example: index 0, 1, 3 -> 0, 1), public
+                // and internal addresses on their own
+                if let Some(addresses) = account_data["addresses"].as_array() {
+                    let mut highest_public_address_index = 0;
+                    let mut highest_internal_address_index = 0;
+                    for address in addresses {
+                        let internal = address["internal"].as_bool().unwrap();
+                        let key_index = address["keyIndex"].as_u64().unwrap() as u32;
+                        let bech32_address = Bech32Address::from_str(address["address"].as_str().unwrap())?;
+                        if internal {
+                            if key_index != highest_internal_address_index {
+                                log::warn!(
+                                    "Skip migrating internal address because of gap: {bech32_address}, index {key_index}"
+                                );
+                                continue;
+                            }
+                            highest_internal_address_index += 1;
+                        } else {
+                            if key_index != highest_public_address_index {
+                                log::warn!(
+                                    "Skip migrating public address because of gap: {bech32_address}, index {key_index}"
+                                );
+                                continue;
+                            }
+                            highest_public_address_index += 1;
+                        }
+                        account_addresses.push(AccountAddress {
+                            address: bech32_address,
+                            key_index,
+                            internal,
+                            used: !address["outputs"].as_object().unwrap().is_empty(),
+                        })
+                    }
+                }
+                let (internal, public): (Vec<AccountAddress>, Vec<AccountAddress>) =
+                    account_addresses.into_iter().partition(|a| a.internal);
+
+                new_accounts.push(AccountDetailsDto {
+                    index: account_data["index"].as_u64().unwrap() as u32,
+                    coin_type: IOTA_COIN_TYPE,
+                    alias: account_data["alias"].as_str().unwrap().to_string(),
+                    public_addresses: public,
+                    internal_addresses: internal,
+                    addresses_with_unspent_outputs: Vec::new(),
+                    outputs: HashMap::new(),
+                    unspent_outputs: HashMap::new(),
+                    transactions: HashMap::new(),
+                    pending_transactions: HashSet::new(),
+                    locked_outputs: HashSet::new(),
+                    incoming_transactions: HashMap::new(),
+                    native_token_foundries: HashMap::new(),
+                })
             }
         }
     }

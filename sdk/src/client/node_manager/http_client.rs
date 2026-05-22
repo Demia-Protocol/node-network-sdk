@@ -76,10 +76,10 @@ impl HttpClient {
     fn build_request(&self, request_builder: RequestBuilder, node: &Node, _timeout: Duration) -> RequestBuilder {
         let mut request_builder = request_builder.header(reqwest::header::USER_AGENT, &self.user_agent);
 
-        if let Some(node_auth) = &node.auth {
-            if let Some(jwt) = &node_auth.jwt {
-                request_builder = request_builder.bearer_auth(jwt);
-            }
+        if let Some(node_auth) = &node.auth
+            && let Some(jwt) = &node_auth.jwt
+        {
+            request_builder = request_builder.bearer_auth(jwt);
         }
         #[cfg(not(target_family = "wasm"))]
         {
@@ -91,7 +91,7 @@ impl HttpClient {
     pub(crate) async fn get(&self, node: Node, timeout: Duration) -> Result<Response> {
         let mut request_builder = self.client.get(node.url.clone());
         request_builder = self.build_request(request_builder, &node, timeout);
-        let start_time = instant::Instant::now();
+        let start_time = web_time::Instant::now();
         let resp = request_builder.send().await?;
         log::debug!(
             "GET: {:?} ms for {} {}",

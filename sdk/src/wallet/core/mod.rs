@@ -122,19 +122,19 @@ where
 
         if let Some(largest_account_index) = largest_account_index_opt {
             for i in 0..accounts.len() {
-                if let Some(account) = accounts.get(i) {
-                    if *account.details().await.index() == largest_account_index {
-                        let _ = accounts.remove(i);
+                if let Some(account) = accounts.get(i)
+                    && *account.details().await.index() == largest_account_index
+                {
+                    let _ = accounts.remove(i);
 
-                        #[cfg(feature = "storage")]
-                        self.storage_manager
-                            .write()
-                            .await
-                            .remove_account(largest_account_index)
-                            .await?;
+                    #[cfg(feature = "storage")]
+                    self.storage_manager
+                        .write()
+                        .await
+                        .remove_account(largest_account_index)
+                        .await?;
 
-                        return Ok(());
-                    }
+                    return Ok(());
                 }
             }
         }

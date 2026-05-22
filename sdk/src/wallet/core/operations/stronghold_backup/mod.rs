@@ -122,10 +122,8 @@ impl Wallet {
             }
         });
 
-        if !ignore_backup_values {
-            if let Some(read_coin_type) = read_coin_type {
-                self.coin_type.store(read_coin_type, Ordering::Relaxed);
-            }
+        if !ignore_backup_values && let Some(read_coin_type) = read_coin_type {
+            self.coin_type.store(read_coin_type, Ordering::Relaxed);
         }
 
         if let Some(mut read_secret_manager) = read_secret_manager {
@@ -154,38 +152,36 @@ impl Wallet {
         // drop secret manager, otherwise we get a deadlock in set_client_options() (there inside of save_wallet_data())
         drop(secret_manager);
 
-        if ignore_if_coin_type_mismatch.is_none() {
-            if let Some(read_client_options) = read_client_options {
-                self.set_client_options(read_client_options).await?;
-            }
+        if ignore_if_coin_type_mismatch.is_none()
+            && let Some(read_client_options) = read_client_options
+        {
+            self.set_client_options(read_client_options).await?;
         }
 
         let mut accounts = self.accounts.write().await;
 
-        if !ignore_backup_values {
-            if let Some(read_accounts) = read_accounts {
-                let restore_accounts = ignore_if_bech32_hrp_mismatch.map_or(true, |expected_bech32_hrp| {
-                    // Only restore if bech32 hrps match
-                    read_accounts.first().map_or(true, |account| {
-                        account
-                            .public_addresses
-                            .first()
-                            .expect("account needs to have a public address")
-                            .address()
-                            .hrp()
-                            == &expected_bech32_hrp
-                    })
-                });
+        if !ignore_backup_values && let Some(read_accounts) = read_accounts {
+            let restore_accounts = ignore_if_bech32_hrp_mismatch.is_none_or(|expected_bech32_hrp| {
+                // Only restore if bech32 hrps match
+                read_accounts.first().is_none_or(|account| {
+                    account
+                        .public_addresses
+                        .first()
+                        .expect("account needs to have a public address")
+                        .address()
+                        .hrp()
+                        == &expected_bech32_hrp
+                })
+            });
 
-                if restore_accounts {
-                    let restored_account = try_join_all(
-                        read_accounts
-                            .into_iter()
-                            .map(|a| Account::new(a, self.inner.clone()).boxed()),
-                    )
-                    .await?;
-                    *accounts = restored_account;
-                }
+            if restore_accounts {
+                let restored_account = try_join_all(
+                    read_accounts
+                        .into_iter()
+                        .map(|a| Account::new(a, self.inner.clone()).boxed()),
+                )
+                .await?;
+                *accounts = restored_account;
             }
         }
 
@@ -304,10 +300,8 @@ impl Wallet<StrongholdSecretManager> {
             }
         });
 
-        if !ignore_backup_values {
-            if let Some(read_coin_type) = read_coin_type {
-                self.coin_type.store(read_coin_type, Ordering::Relaxed);
-            }
+        if !ignore_backup_values && let Some(read_coin_type) = read_coin_type {
+            self.coin_type.store(read_coin_type, Ordering::Relaxed);
         }
 
         if let Some(mut read_secret_manager) = read_secret_manager {
@@ -328,37 +322,35 @@ impl Wallet<StrongholdSecretManager> {
         drop(secret_manager);
 
         // Update Wallet with read data
-        if ignore_if_coin_type_mismatch.is_none() {
-            if let Some(read_client_options) = read_client_options {
-                // If the nodes are from the same network as the current client options, then extend it
-                self.set_client_options(read_client_options).await?;
-            }
+        if ignore_if_coin_type_mismatch.is_none()
+            && let Some(read_client_options) = read_client_options
+        {
+            // If the nodes are from the same network as the current client options, then extend it
+            self.set_client_options(read_client_options).await?;
         }
 
-        if !ignore_backup_values {
-            if let Some(read_accounts) = read_accounts {
-                let restore_accounts = ignore_if_bech32_hrp_mismatch.map_or(true, |expected_bech32_hrp| {
-                    // Only restore if bech32 hrps match
-                    read_accounts.first().map_or(true, |account| {
-                        account
-                            .public_addresses
-                            .first()
-                            .expect("account needs to have a public address")
-                            .address()
-                            .hrp()
-                            == expected_bech32_hrp
-                    })
-                });
+        if !ignore_backup_values && let Some(read_accounts) = read_accounts {
+            let restore_accounts = ignore_if_bech32_hrp_mismatch.is_none_or(|expected_bech32_hrp| {
+                // Only restore if bech32 hrps match
+                read_accounts.first().is_none_or(|account| {
+                    account
+                        .public_addresses
+                        .first()
+                        .expect("account needs to have a public address")
+                        .address()
+                        .hrp()
+                        == expected_bech32_hrp
+                })
+            });
 
-                if restore_accounts {
-                    let restored_account = try_join_all(
-                        read_accounts
-                            .into_iter()
-                            .map(|a| Account::new(a, self.inner.clone()).boxed()),
-                    )
-                    .await?;
-                    *accounts = restored_account;
-                }
+            if restore_accounts {
+                let restored_account = try_join_all(
+                    read_accounts
+                        .into_iter()
+                        .map(|a| Account::new(a, self.inner.clone()).boxed()),
+                )
+                .await?;
+                *accounts = restored_account;
             }
         }
 

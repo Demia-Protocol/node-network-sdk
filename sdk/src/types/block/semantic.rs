@@ -41,12 +41,13 @@ impl std::error::Error for ConflictError {}
 
 /// Represents the different reasons why a transaction can conflict with the ledger state.
 #[repr(u8)]
-#[derive(Debug, Copy, Clone, Eq, PartialEq, packable::Packable)]
+#[derive(Default, Debug, Copy, Clone, Eq, PartialEq, packable::Packable)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[packable(unpack_error = ConflictError)]
 #[packable(tag_type = u8, with_error = ConflictError::InvalidConflict)]
 pub enum ConflictReason {
     /// The block has no conflict.
+    #[default]
     None = 0,
     /// The referenced Utxo was already spent.
     InputUtxoAlreadySpent = 1,
@@ -129,12 +130,6 @@ impl TryFrom<u8> for ConflictReason {
             255 => Self::SemanticValidationFailed,
             x => return Err(Self::Error::InvalidConflict(x)),
         })
-    }
-}
-
-impl Default for ConflictReason {
-    fn default() -> Self {
-        Self::None
     }
 }
 
@@ -265,17 +260,17 @@ pub fn semantic_validation(
             return Ok(ConflictReason::TimelockNotExpired);
         }
 
-        if !unlock_conditions.is_expired(context.milestone_timestamp) {
-            if let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return() {
-                let amount = context
-                    .storage_deposit_returns
-                    .entry(*storage_deposit_return.return_address())
-                    .or_default();
+        if !unlock_conditions.is_expired(context.milestone_timestamp)
+            && let Some(storage_deposit_return) = unlock_conditions.storage_deposit_return()
+        {
+            let amount = context
+                .storage_deposit_returns
+                .entry(*storage_deposit_return.return_address())
+                .or_default();
 
-                *amount = amount
-                    .checked_add(storage_deposit_return.amount())
-                    .ok_or(Error::StorageDepositReturnOverflow)?;
-            }
+            *amount = amount
+                .checked_add(storage_deposit_return.amount())
+                .ok_or(Error::StorageDepositReturnOverflow)?;
         }
 
         context.input_amount = context
@@ -312,10 +307,10 @@ pub fn semantic_validation(
             _ => return Err(Error::UnsupportedOutputKind(created_output.kind())),
         };
 
-        if let Some(sender) = features.sender() {
-            if !context.unlocked_addresses.contains(sender.address()) {
-                return Ok(ConflictReason::UnverifiedSender);
-            }
+        if let Some(sender) = features.sender()
+            && !context.unlocked_addresses.contains(sender.address())
+        {
+            return Ok(ConflictReason::UnverifiedSender);
         }
 
         context.output_amount = context

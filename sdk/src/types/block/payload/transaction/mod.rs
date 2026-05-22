@@ -83,7 +83,7 @@ impl Packable for TransactionPayload {
 
 fn verify_essence_unlocks(essence: &TransactionEssence, unlocks: &Unlocks) -> Result<(), Error> {
     match essence {
-        TransactionEssence::Regular(ref essence) => {
+        TransactionEssence::Regular(essence) => {
             if essence.inputs().len() != unlocks.len() {
                 return Err(Error::InputUnlockCountMismatch {
                     input_count: essence.inputs().len(),

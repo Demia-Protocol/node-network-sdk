@@ -156,7 +156,6 @@ pub(super) mod types {
         };
     }
 
-    pub(crate) use impl_id;
     pub(crate) use string_serde_impl;
 
     impl_id!(TransactionId, 32);

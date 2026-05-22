@@ -493,18 +493,18 @@ impl InputSelection {
                             false
                         }
                     });
-                    if let Some(foundry_input) = foundry_input {
-                        if let Err(err) = FoundryOutput::transition_inner(
+                    if let Some(foundry_input) = foundry_input
+                        && let Err(err) = FoundryOutput::transition_inner(
                             foundry_input.output.as_foundry(),
                             foundry_output,
                             input_native_tokens_builder.deref(),
                             output_native_tokens_builder.deref(),
-                        ) {
-                            log::debug!("validate_transitions error {err:?}");
-                            return Err(Error::UnfulfillableRequirement(Requirement::Foundry(
-                                foundry_output.id(),
-                            )));
-                        }
+                        )
+                    {
+                        log::debug!("validate_transitions error {err:?}");
+                        return Err(Error::UnfulfillableRequirement(Requirement::Foundry(
+                            foundry_output.id(),
+                        )));
                     }
                 }
                 Output::Nft(nft_output) => {

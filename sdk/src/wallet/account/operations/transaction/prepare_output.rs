@@ -52,10 +52,10 @@ where
             .create_initial_output_builder(params.recipient_address, nft_id, rent_structure)
             .await?;
 
-        if let Some(assets) = &params.assets {
-            if let Some(native_tokens) = &assets.native_tokens {
-                first_output_builder = first_output_builder.with_native_tokens(native_tokens.clone());
-            }
+        if let Some(assets) = &params.assets
+            && let Some(native_tokens) = &assets.native_tokens
+        {
+            first_output_builder = first_output_builder.with_native_tokens(native_tokens.clone());
         }
 
         if let Some(features) = params.features {

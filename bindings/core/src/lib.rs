@@ -3,6 +3,12 @@
 
 //! Core library for iota-sdk bindings
 
+// `Error::Client` wraps a 128-byte `iota_sdk::client::Error` from a deprecated
+// upstream. Boxing it propagates through every From impl and call site for
+// stylistic gain only; consistent with `#[allow(clippy::large_enum_variant)]`
+// already on the Error enum.
+#![allow(clippy::result_large_err)]
+
 mod error;
 mod method;
 mod method_handler;
@@ -11,7 +17,7 @@ mod response;
 
 use std::fmt::{Formatter, Result as FmtResult};
 
-use derivative::Derivative;
+use educe::Educe;
 use fern_logger::{logger_init, LoggerConfig, LoggerOutputConfigBuilder};
 pub use iota_sdk;
 use iota_sdk::{
@@ -37,14 +43,14 @@ pub fn init_logger(config: String) -> std::result::Result<(), fern_logger::Error
     logger_init(config)
 }
 
-#[derive(Derivative, Deserialize, Default)]
-#[derivative(Debug)]
+#[derive(Educe, Deserialize, Default)]
+#[educe(Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct WalletOptions {
     pub storage_path: Option<String>,
     pub client_options: Option<ClientOptions>,
     pub coin_type: Option<u32>,
-    #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+    #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
     pub secret_manager: Option<SecretManagerDto>,
 }
 

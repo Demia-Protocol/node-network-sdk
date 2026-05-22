@@ -2,7 +2,7 @@
 name = "iota-sdk"
 version = "1.1.5"
 authors = ["IOTA Stiftung"]
-edition = "2021"
+edition = "2024"
 description = "The IOTA SDK provides developers with a seamless experience to develop on IOTA by providing account abstractions and clients to interact with node APIs."
 documentation = "https://wiki.iota.org"
 homepage = "https://www.iota.org/"
@@ -57,7 +57,7 @@ serde_json = { version = "1.0.113", default-features = false, features = [
 ] }
 
 # Optional dependencies
-anymap = { version = "0.12.1", default-features = false, optional = true }
+anymap2 = { version = "0.13", default-features = false, optional = true }
 async-trait = { version = "0.1.77", default-features = false, optional = true }
 bs58 = { version = "0.5.0", default-features = false, optional = true }
 fern-logger = { version = "0.5.0", default-features = false, optional = true }
@@ -65,12 +65,10 @@ futures = { version = "0.3.30", default-features = false, features = [
     "thread-pool",
 ], optional = true }
 heck = { version = "0.4.1", default-features = false, optional = true }
-instant = { version = "0.1.12", default-features = false, optional = true }
+web-time = { version = "1.1", default-features = false, optional = true }
 iota-ledger-nano = { version = "1.0.1", default-features = false, optional = true }
-
 # Demia modified
-iota_stronghold = { git = "https://github.com/demia-protocol/stronghold.rs", branch = "develop-demia", default-features = false, features = [ "std" ], optional = true }
-
+iota_stronghold = { git = "https://github.com/demia-protocol/stronghold.rs", branch = "develop-demia", default-features = false, features = ["std"], optional = true }
 log = { version = "0.4.20", default-features = false, optional = true }
 num_cpus = { version = "1.16.0", default-features = false, optional = true }
 once_cell = { version = "1.19.0", default-features = false, optional = true }
@@ -115,9 +113,7 @@ gloo-storage = { version = "0.3.0", default-features = false, optional = true }
 gloo-timers = { version = "0.3.0", default-features = false, features = [
     "futures",
 ] }
-instant = { version = "0.1.12", default-features = false, features = [
-    "wasm-bindgen",
-], optional = true }
+web-time = { version = "1.1", default-features = false, optional = true }
 lazy_static = { version = "1.4.0", default-features = false }
 tokio = { version = "1.36.0", default-features = false, features = [
     "macros",
@@ -179,7 +175,7 @@ std = [
 storage = [
     "iota-crypto/chacha",
     "dep:time",
-    "dep:anymap",
+    "dep:anymap2",
     "dep:once_cell",
     "dep:heck",
 ]
@@ -187,7 +183,7 @@ stronghold = [
     "iota_stronghold",
     "iota-crypto/chacha",
     "dep:time",
-    "dep:anymap",
+    "dep:anymap2",
     "dep:once_cell",
     "dep:heck",
 ]
@@ -205,7 +201,7 @@ client = [
     "thiserror",
     "futures",
     "serde",
-    "instant",
+    "web-time",
     "iota-crypto/bip39",
     "iota-crypto/x25519", # Demia added
     "iota-crypto/aes-gcm", # Demia added

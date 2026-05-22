@@ -46,14 +46,14 @@ impl SingleThreadedMinerBuilder {
         SingleThreadedMiner {
             timeout_in_seconds: self
                 .timeout_in_seconds
-                .map(|timeout| instant::Duration::from_secs(timeout)),
+                .map(|timeout| web_time::Duration::from_secs(timeout)),
         }
     }
 }
 
 /// Single-threaded proof-of-work for Wasm.
 pub struct SingleThreadedMiner {
-    timeout_in_seconds: Option<instant::Duration>,
+    timeout_in_seconds: Option<web_time::Duration>,
 }
 
 impl SingleThreadedMiner {
@@ -80,7 +80,7 @@ impl SingleThreadedMiner {
 
         // Counter to reduce number of mining_start.elapsed() calls.
         let mut counter = 0;
-        let mining_start = instant::Instant::now();
+        let mining_start = web_time::Instant::now();
 
         loop {
             if let Some(timeout) = self.timeout_in_seconds {

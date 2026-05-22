@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use rand::{
-    distributions::{
-        uniform::{SampleRange, SampleUniform},
-        Distribution, Standard,
-    },
     Rng,
+    distributions::{
+        Distribution, Standard,
+        uniform::{SampleRange, SampleUniform},
+    },
+    random,
 };
 
 /// Generates a random number.
@@ -14,7 +15,7 @@ pub fn rand_number<T>() -> T
 where
     Standard: Distribution<T>,
 {
-    rand::thread_rng().gen()
+    random()
 }
 
 /// Generates a random number within a given range.

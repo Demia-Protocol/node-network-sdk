@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crypto::keys::bip44::Bip44;
-use derivative::Derivative;
+use educe::Educe;
 use iota_sdk::{
     client::api::{GetAddressesOptions, PreparedTransactionDataDto},
     utils::serde::bip44::Bip44Def,
@@ -13,8 +13,8 @@ use serde::{Deserialize, Serialize};
 use crate::OmittedDebug;
 
 /// Each public secret manager method.
-#[derive(Clone, Derivative, Serialize, Deserialize)]
-#[derivative(Debug)]
+#[derive(Clone, Educe, Serialize, Deserialize)]
+#[educe(Debug)]
 #[serde(tag = "name", content = "data", rename_all = "camelCase")]
 #[non_exhaustive]
 pub enum SecretManagerMethod {
@@ -59,14 +59,14 @@ pub enum SecretManagerMethod {
     #[serde(rename_all = "camelCase")]
     SignTransaction {
         /// Prepared transaction data
-        prepared_transaction_data: PreparedTransactionDataDto,
+        prepared_transaction_data: Box<PreparedTransactionDataDto>,
     },
     /// Store a mnemonic in the Stronghold vault
     #[cfg(feature = "stronghold")]
     #[cfg_attr(docsrs, doc(cfg(feature = "stronghold")))]
     StoreMnemonic {
         /// Mnemonic
-        #[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))]
+        #[educe(Debug(method(OmittedDebug::omitted_fmt)))]
         mnemonic: String,
     },
 }

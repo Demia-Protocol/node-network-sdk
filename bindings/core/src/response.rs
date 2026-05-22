@@ -5,7 +5,7 @@ use std::collections::HashMap;
 #[cfg(not(target_family = "wasm"))]
 use std::collections::HashSet;
 
-use derivative::Derivative;
+use educe::Educe;
 #[cfg(feature = "ledger_nano")]
 use iota_sdk::client::secret::LedgerNanoStatus;
 use iota_sdk::{
@@ -53,8 +53,8 @@ use {
 use crate::{error::Error, OmittedDebug};
 
 /// The response message.
-#[derive(Serialize, Derivative)]
-#[derivative(Debug)]
+#[derive(Serialize, Educe)]
+#[educe(Debug)]
 #[serde(tag = "type", content = "payload", rename_all = "camelCase")]
 #[non_exhaustive]
 pub enum Response {
@@ -203,7 +203,7 @@ pub enum Response {
     ParsedBech32Address(AddressDto),
     /// Response for:
     /// - [`MnemonicToHexSeed`](crate::method::UtilsMethod::MnemonicToHexSeed)
-    MnemonicHexSeed(#[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))] String),
+    MnemonicHexSeed(#[educe(Debug(method(OmittedDebug::omitted_fmt)))] String),
     /// Response for:
     /// - [`MilestoneId`](crate::method::UtilsMethod::MilestoneId)
     MilestoneId(MilestoneId),
@@ -257,7 +257,7 @@ pub enum Response {
     Faucet(String),
     /// Response for:
     /// - [`GenerateMnemonic`](crate::method::UtilsMethod::GenerateMnemonic)
-    GeneratedMnemonic(#[derivative(Debug(format_with = "OmittedDebug::omitted_fmt"))] String),
+    GeneratedMnemonic(#[educe(Debug(method(OmittedDebug::omitted_fmt)))] String),
     /// Response for
     /// - [`GetLedgerNanoStatus`](crate::method::SecretManagerMethod::GetLedgerNanoStatus)
     #[cfg(feature = "ledger_nano")]

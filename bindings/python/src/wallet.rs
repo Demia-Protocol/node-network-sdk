@@ -79,10 +79,20 @@ pub fn listen_wallet(wallet: &Wallet, events: Vec<u8>, handler: PyObject) {
             .as_ref()
             .expect("wallet got destroyed")
             .listen(rust_events, move |event| {
-                let event_string = serde_json::to_string(&event).expect("json to string error");
-                Python::with_gil(|py| {
-                    let args = PyTuple::new(py, &[event_string]);
-                    handler.call1(py, args).expect("failed to call python callback");
+                let event_string = match serde_json::to_string(&event) {
+                    Ok(s) => s,
+                    Err(e) => {
+                        log::error!("failed to serialize wallet event: {e}");
+                        return;
+                    }
+                };
+                Python::with_gil(|py| match PyTuple::new(py, &[event_string]) {
+                    Ok(args) => {
+                        if let Err(e) = handler.call1(py, args) {
+                            log::error!("python wallet callback failed: {e}");
+                        }
+                    }
+                    Err(e) => log::error!("failed to convert event into PyTuple: {e}"),
                 });
             })
             .await;

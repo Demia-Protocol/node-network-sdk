@@ -48,10 +48,10 @@ where
 
         let mut registered_participation_events = HashMap::new();
         for event_id in events_to_register {
-            if let Some(events_to_ignore) = &options.events_to_ignore {
-                if events_to_ignore.contains(&event_id) {
-                    continue;
-                }
+            if let Some(events_to_ignore) = &options.events_to_ignore
+                && events_to_ignore.contains(&event_id)
+            {
+                continue;
             }
 
             let event_data = client.event(&event_id).await?;

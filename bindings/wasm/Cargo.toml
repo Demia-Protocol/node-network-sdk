@@ -38,6 +38,3 @@ wasm-logger = { version = "0.2.0", default-features = false }
 
 [target.'cfg(all(target_arch = "wasm32", not(target_os = "wasi")))'.dependencies]
 getrandom = { version = "0.2.12", default-features = false, features = ["js"] }
-instant = { version = "0.1.12", default-features = false, features = [
-    "wasm-bindgen",
-] }

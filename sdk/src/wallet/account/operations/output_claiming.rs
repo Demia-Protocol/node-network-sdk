@@ -54,62 +54,63 @@ impl AccountDetails {
             .filter(|(_, o)| o.output.is_basic() || o.output.is_nft())
         {
             // Don't use outputs that are locked for other transactions
-            if !self.locked_outputs.contains(output_id) && self.outputs.contains_key(output_id) {
-                if let Some(unlock_conditions) = output_data.output.unlock_conditions() {
-                    // If there is a single [UnlockCondition], then it's an
-                    // [AddressUnlockCondition] and we own it already without
-                    // further restrictions
-                    if unlock_conditions.len() != 1
-                        && can_output_be_unlocked_now(
-                            // We use the addresses with unspent outputs, because other addresses of the
-                            // account without unspent outputs can't be related to this output
-                            &self.addresses_with_unspent_outputs,
-                            // outputs controlled by an alias or nft are currently not considered
-                            &[],
-                            output_data,
-                            time,
-                            // Not relevant without alias addresses
-                            None,
-                        )?
-                    {
-                        match outputs_to_claim {
-                            OutputsToClaim::MicroTransactions => {
-                                if let Some(sdr) = unlock_conditions.storage_deposit_return() {
-                                    // If expired, it's not a micro transaction anymore
-                                    if unlock_conditions.is_expired(time) {
-                                        continue;
-                                    }
-                                    // Only micro transaction if not the same
-                                    if sdr.amount() != output_data.output.amount() {
-                                        output_ids_to_claim.insert(output_data.output_id);
-                                    }
+            if !self.locked_outputs.contains(output_id)
+                && self.outputs.contains_key(output_id)
+                && let Some(unlock_conditions) = output_data.output.unlock_conditions()
+            {
+                // If there is a single [UnlockCondition], then it's an
+                // [AddressUnlockCondition] and we own it already without
+                // further restrictions
+                if unlock_conditions.len() != 1
+                    && can_output_be_unlocked_now(
+                        // We use the addresses with unspent outputs, because other addresses of the
+                        // account without unspent outputs can't be related to this output
+                        &self.addresses_with_unspent_outputs,
+                        // outputs controlled by an alias or nft are currently not considered
+                        &[],
+                        output_data,
+                        time,
+                        // Not relevant without alias addresses
+                        None,
+                    )?
+                {
+                    match outputs_to_claim {
+                        OutputsToClaim::MicroTransactions => {
+                            if let Some(sdr) = unlock_conditions.storage_deposit_return() {
+                                // If expired, it's not a micro transaction anymore
+                                if unlock_conditions.is_expired(time) {
+                                    continue;
                                 }
-                            }
-                            OutputsToClaim::NativeTokens => {
-                                if !output_data.output.native_tokens().map(|n| n.is_empty()).unwrap_or(true) {
+                                // Only micro transaction if not the same
+                                if sdr.amount() != output_data.output.amount() {
                                     output_ids_to_claim.insert(output_data.output_id);
                                 }
                             }
-                            OutputsToClaim::Nfts => {
-                                if output_data.output.is_nft() {
-                                    output_ids_to_claim.insert(output_data.output_id);
-                                }
-                            }
-                            OutputsToClaim::Amount => {
-                                let mut claimable_amount = output_data.output.amount();
-                                if !unlock_conditions.is_expired(time) {
-                                    claimable_amount -= unlock_conditions
-                                        .storage_deposit_return()
-                                        .map(|s| s.amount())
-                                        .unwrap_or_default()
-                                };
-                                if claimable_amount > 0 {
-                                    output_ids_to_claim.insert(output_data.output_id);
-                                }
-                            }
-                            OutputsToClaim::All => {
+                        }
+                        OutputsToClaim::NativeTokens => {
+                            if !output_data.output.native_tokens().map(|n| n.is_empty()).unwrap_or(true) {
                                 output_ids_to_claim.insert(output_data.output_id);
                             }
+                        }
+                        OutputsToClaim::Nfts => {
+                            if output_data.output.is_nft() {
+                                output_ids_to_claim.insert(output_data.output_id);
+                            }
+                        }
+                        OutputsToClaim::Amount => {
+                            let mut claimable_amount = output_data.output.amount();
+                            if !unlock_conditions.is_expired(time) {
+                                claimable_amount -= unlock_conditions
+                                    .storage_deposit_return()
+                                    .map(|s| s.amount())
+                                    .unwrap_or_default()
+                            };
+                            if claimable_amount > 0 {
+                                output_ids_to_claim.insert(output_data.output_id);
+                            }
+                        }
+                        OutputsToClaim::All => {
+                            output_ids_to_claim.insert(output_data.output_id);
                         }
                     }
                 }
@@ -160,16 +161,14 @@ where
                 }
             }
             // Don't use outputs that are locked for other transactions
-            if !account_details.locked_outputs.contains(output_id) {
-                if let Some(output) = account_details.outputs.get(output_id) {
-                    if let Output::Basic(basic_output) = &output.output {
-                        if basic_output.unlock_conditions().len() == 1 {
-                            // Store outputs with [`AddressUnlockCondition`] alone, because they could be used as
-                            // additional input, if required
-                            basic_outputs.push(output_data.clone());
-                        }
-                    }
-                }
+            if !account_details.locked_outputs.contains(output_id)
+                && let Some(output) = account_details.outputs.get(output_id)
+                && let Output::Basic(basic_output) = &output.output
+                && basic_output.unlock_conditions().len() == 1
+            {
+                // Store outputs with [`AddressUnlockCondition`] alone, because they could be used as
+                // additional input, if required
+                basic_outputs.push(output_data.clone());
             }
         }
         log::debug!("[OUTPUT_CLAIMING] available basic outputs: {}", basic_outputs.len());
@@ -233,10 +232,10 @@ where
 
         let mut outputs_to_claim = Vec::new();
         for output_id in output_ids_to_claim {
-            if let Some(output_data) = account_details.unspent_outputs.get(&output_id) {
-                if !account_details.locked_outputs.contains(&output_id) {
-                    outputs_to_claim.push(output_data.clone());
-                }
+            if let Some(output_data) = account_details.unspent_outputs.get(&output_id)
+                && !account_details.locked_outputs.contains(&output_id)
+            {
+                outputs_to_claim.push(output_data.clone());
             }
         }
 

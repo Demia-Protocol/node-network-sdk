@@ -3,7 +3,7 @@
 
 use std::collections::HashSet;
 
-use instant::Instant;
+use web_time::Instant;
 use packable::bounded::TryIntoBoundedU16Error;
 
 #[cfg(feature = "events")]
