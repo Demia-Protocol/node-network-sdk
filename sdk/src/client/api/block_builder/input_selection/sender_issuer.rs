@@ -252,12 +252,9 @@ fn get_required_addresses_for_sender_and_issuer(
             _ => false,
         };
         if utxo_chain_creation && let Some(issuer_feature) = output.immutable_features().and_then(Features::issuer) {
-            #[allow(clippy::set_contains_or_insert)]
-            if !required_sender_or_issuer_addresses.contains(issuer_feature.address()) {
-                // Only add if not already present in the selected inputs.
-                if !unlocked_addresses.contains(issuer_feature.address()) {
-                    required_sender_or_issuer_addresses.insert(*issuer_feature.address());
-                }
+            // Only add if not already present in the selected inputs.
+            if !unlocked_addresses.contains(issuer_feature.address()) {
+                required_sender_or_issuer_addresses.insert(*issuer_feature.address());
             }
         }
     }
